@@ -1,0 +1,82 @@
+export type Language = 'EN' | 'ID';
+
+export const translations = {
+  EN: {
+    sidebar: {
+      dashboard: "Dashboard",
+      clients: "Clients",
+      content: "Content",
+      settings: "Settings",
+    },
+    topbar: {
+      searchPlaceholder: "Search clients, projects, content… (Press Enter)",
+      searchingFor: "Searching for",
+      searchNotice: "Global search will be wired to Supabase later.",
+      languageSwitched: "Language switched to",
+      languageNotice: "Admin panel language updated.",
+      notifications: "Notifications",
+      viewAllActivity: "View all activity",
+      admin: "Admin",
+      administrator: "Administrator",
+      myAccount: "My Account",
+      accountSettings: "Account Settings",
+      logout: "Logout",
+    },
+    dashboard: {
+      welcomeBack: "Welcome back",
+      subtitle: "Here's what's happening across your creative studio today.",
+      totalClients: "Total Clients",
+      totalProjects: "Total Projects",
+      activeRevenue: "Active Revenue",
+      newLeads: "New Leads",
+      revenueActivityTitle: "Revenue & Activity",
+      revenueActivitySub: "Monthly acquisitions over the last year",
+      clientStatusTitle: "Client Status",
+      clientStatusSub: "Distribution of active clients",
+      totalProjectsLabel: "Total projects",
+      recentActivityTitle: "Recent Activity",
+      recentActivitySub: "Latest events across your workspace",
+      viewAll: "View all →",
+      noRecentActivity: "No recent activity",
+    }
+  },
+  ID: {
+    sidebar: {
+      dashboard: "Dasbor",
+      clients: "Klien",
+      content: "Konten",
+      settings: "Pengaturan",
+    },
+    topbar: {
+      searchPlaceholder: "Cari klien, proyek, konten… (Tekan Enter)",
+      searchingFor: "Mencari",
+      searchNotice: "Pencarian global akan dihubungkan ke Supabase nanti.",
+      languageSwitched: "Bahasa diubah ke",
+      languageNotice: "Bahasa panel admin telah diperbarui.",
+      notifications: "Notifikasi",
+      viewAllActivity: "Lihat semua aktivitas",
+      admin: "Admin",
+      administrator: "Administrator",
+      myAccount: "Akun Saya",
+      accountSettings: "Pengaturan Akun",
+      logout: "Keluar",
+    },
+    dashboard: {
+      welcomeBack: "Selamat datang kembali",
+      subtitle: "Berikut adalah aktivitas di studio kreatif Anda hari ini.",
+      totalClients: "Total Klien",
+      totalProjects: "Total Proyek",
+      activeRevenue: "Pendapatan Aktif",
+      newLeads: "Prospek Baru",
+      revenueActivityTitle: "Pendapatan & Aktivitas",
+      revenueActivitySub: "Akuisisi bulanan selama setahun terakhir",
+      clientStatusTitle: "Status Klien",
+      clientStatusSub: "Distribusi klien aktif",
+      totalProjectsLabel: "Total proyek",
+      recentActivityTitle: "Aktivitas Terbaru",
+      recentActivitySub: "Kejadian terbaru di ruang kerja Anda",
+      viewAll: "Lihat semua →",
+      noRecentActivity: "Tidak ada aktivitas terbaru",
+    }
+  }
+};

@@ -1,0 +1,15 @@
+[build]
+  # Netlify usually looks at the root of a monorepo for the initial commands,
+  # but setting a base directory is often needed if deploying a single app.
+  # For deploying multiple sites from a monorepo, Netlify uses the site configuration.
+  # This file provides a sensible default if deploying the whole monorepo.
+  command = "npm run build"
+  publish = "apps/app/dist"
+
+[[redirects]]
+  # Redirect any other requests to frontend's index.html for SPA routing
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Netlify functions or next runtime can be configured here if deploying Next.js separately

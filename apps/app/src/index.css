@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand Colors */
+    --violet: 257 65% 57%;
+    --volt: 77 100% 50%;
+    --void: 240 3% 16%;
+    --snow: 0 0% 96%;
+    
+    /* Semantic tokens - Dark Theme as default */
+    --background: 240 3% 16%;
+    --foreground: 0 0% 96%;
+
+    --card: 240 3% 20%;
+    --card-foreground: 0 0% 96%;
+
+    --popover: 240 3% 20%;
+    --popover-foreground: 0 0% 96%;
+
+    --primary: 257 65% 57%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 77 100% 50%;
+    --secondary-foreground: 240 3% 16%;
+
+    --muted: 240 3% 25%;
+    --muted-foreground: 240 3% 60%;
+
+    --accent: 77 100% 50%;
+    --accent-foreground: 240 3% 16%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 3% 25%;
+    --input: 240 3% 25%;
+    --ring: 257 65% 57%;
+
+    --radius: 0.75rem;
+
+    /* Glass effect */
+    --glass-bg: 240 3% 16% / 0.7;
+    --glass-border: 0 0% 100% / 0.1;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(257 65% 57%), hsl(257 65% 45%));
+    --gradient-accent: linear-gradient(135deg, hsl(77 100% 50%), hsl(77 100% 40%));
+    --gradient-hero: linear-gradient(180deg, hsl(240 3% 16%) 0%, hsl(257 65% 20%) 100%);
+  }
+
+  .dark {
+    --background: 240 3% 16%;
+    --foreground: 0 0% 96%;
+
+    --card: 240 3% 20%;
+    --card-foreground: 0 0% 96%;
+
+    --popover: 240 3% 20%;
+    --popover-foreground: 0 0% 96%;
+
+    --primary: 257 65% 57%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 77 100% 50%;
+    --secondary-foreground: 240 3% 16%;
+
+    --muted: 240 3% 25%;
+    --muted-foreground: 240 3% 60%;
+
+    --accent: 77 100% 50%;
+    --accent-foreground: 240 3% 16%;
+
+    --border: 240 3% 25%;
+    --input: 240 3% 25%;
+    --ring: 257 65% 57%;
+
+    --glass-bg: 240 3% 16% / 0.7;
+    --glass-border: 0 0% 100% / 0.1;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Jost', sans-serif;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply backdrop-blur-xl border border-white/20;
+    background: hsla(var(--glass-bg));
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-xl border border-white/10;
+    background: hsla(240 3% 16% / 0.8);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:opacity-90 transition-all duration-300 font-medium;
+  }
+
+  .btn-accent {
+    @apply bg-secondary text-secondary-foreground hover:opacity-90 transition-all duration-300 font-medium;
+  }
+
+  .btn-outline-primary {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 font-medium;
+  }
+
+  .btn-whatsapp {
+    @apply bg-[#25D366] text-white hover:bg-[#20BD5C] transition-all duration-300 font-medium;
+  }
+
+  .section-padding {
+    @apply py-20 md:py-32 px-4 md:px-8;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .bg-void {
+    background-color: hsl(var(--void));
+  }
+
+  .bg-snow {
+    background-color: hsl(var(--snow));
+  }
+
+  .text-violet {
+    color: hsl(var(--primary));
+  }
+
+  .text-volt {
+    color: hsl(var(--secondary));
+  }
+}

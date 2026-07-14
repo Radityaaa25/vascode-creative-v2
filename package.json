@@ -1,0 +1,16 @@
+{
+  "name": "vascode_v2",
+  "private": true,
+  "packageManager": "pnpm@9.4.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "pnpm -r --parallel dev",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "latest"
+  }
+}
