@@ -186,24 +186,24 @@ const Portfolio = () => {
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-void/80 backdrop-blur-sm"
             onClick={() => setSelectedProject(null)}
           >
+            {/* Close Button (on overlay, always visible) */}
+            <motion.button
+              onClick={() => setSelectedProject(null)}
+              className="fixed top-4 right-4 z-[60] w-10 h-10 rounded-full bg-void/80 text-snow flex items-center justify-center hover:bg-void transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <X className="w-5 h-5" />
+            </motion.button>
+
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-2xl bg-void border border-snow/10 rounded-3xl overflow-hidden shadow-2xl"
+              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-void border border-snow/10 rounded-3xl shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close Button */}
-              <motion.button
-                onClick={() => setSelectedProject(null)}
-                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-void/80 text-snow flex items-center justify-center hover:bg-void transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <X className="w-5 h-5" />
-              </motion.button>
-
               {/* Image */}
               <div className="aspect-video overflow-hidden">
                 <img

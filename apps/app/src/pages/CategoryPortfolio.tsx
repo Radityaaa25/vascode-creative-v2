@@ -116,22 +116,22 @@ function CategoryPortfolioInner() {
             className="fixed inset-0 z-50 flex items-center justify-center bg-void/80 p-4 backdrop-blur-sm"
             onClick={() => setSelectedProject(null)}
           >
+            <motion.button
+              onClick={() => setSelectedProject(null)}
+              className="fixed right-4 top-4 z-[60] flex h-10 w-10 items-center justify-center rounded-full bg-void/80 text-snow transition-colors hover:bg-void"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <X className="h-5 w-5" />
+            </motion.button>
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-snow/10 bg-void shadow-2xl"
+              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl border border-snow/10 bg-void shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <motion.button
-                onClick={() => setSelectedProject(null)}
-                className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-void/80 text-snow transition-colors hover:bg-void"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <X className="h-5 w-5" />
-              </motion.button>
               <div className="aspect-video overflow-hidden">
                 <img src={selectedProject.image} alt={selectedProject.title} className="h-full w-full object-cover" loading="lazy" />
               </div>
