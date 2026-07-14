@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import logoIcon from '@/assets/logo-icon.png';
 import logoFull from '@/assets/logo-full.png';
 
@@ -9,6 +10,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -105,7 +107,18 @@ const Navbar = () => {
           </div>
 
           {/* Language Toggle & Mobile Menu */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Theme Toggle */}
+            <motion.button
+              onClick={toggleTheme}
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-snow/10 text-snow hover:bg-volt hover:text-void transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </motion.button>
+
             {/* Language Toggle */}
             <motion.button
               onClick={() => setLanguage(language === 'en' ? 'id' : 'en')}
@@ -158,6 +171,25 @@ const Navbar = () => {
                   {item.label}
                 </motion.a>
               ))}
+            </div>
+            <div className="flex items-center gap-3 px-4 pt-3 pb-1 border-t border-snow/10">
+              <motion.button
+                onClick={toggleTheme}
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-snow/10 text-snow hover:bg-volt hover:text-void transition-all duration-300"
+                whileTap={{ scale: 0.95 }}
+                aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              </motion.button>
+              <motion.button
+                onClick={() => { setLanguage(language === 'en' ? 'id' : 'en'); setIsMobileMenuOpen(false); }}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-snow/10 text-snow text-sm font-medium transition-all duration-300"
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className={language === 'en' ? 'font-bold' : 'opacity-60'}>EN</span>
+                <span className="opacity-40">/</span>
+                <span className={language === 'id' ? 'font-bold' : 'opacity-60'}>ID</span>
+              </motion.button>
             </div>
           </motion.div>
         )}

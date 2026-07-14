@@ -82,6 +82,41 @@
     --glass-bg: 240 3% 16% / 0.7;
     --glass-border: 0 0% 100% / 0.1;
   }
+
+  .light {
+    --void: 0 0% 96%;
+    --snow: 240 3% 16%;
+
+    --background: 0 0% 96%;
+    --foreground: 240 3% 16%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 3% 16%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 3% 16%;
+
+    --primary: 257 65% 57%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 77 100% 50%;
+    --secondary-foreground: 240 3% 16%;
+
+    --muted: 0 0% 88%;
+    --muted-foreground: 240 3% 45%;
+
+    --accent: 77 100% 50%;
+    --accent-foreground: 240 3% 16%;
+
+    --border: 0 0% 82%;
+    --input: 0 0% 82%;
+    --ring: 257 65% 57%;
+
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 0% / 0.08;
+
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 96%) 0%, hsl(257 65% 92%) 100%);
+  }
 }
 
 @layer base {
