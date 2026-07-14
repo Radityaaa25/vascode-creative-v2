@@ -80,13 +80,20 @@ function CategoryPortfolioInner() {
                     <p className="mb-4 line-clamp-2 text-sm text-snow/60">{project.description}</p>
                     <motion.button
                       onClick={() => setSelectedProject(project)}
-                      className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
-                      whileHover={{ scale: 1.05 }}
+                      className="portfolio-view-btn"
                       whileTap={{ scale: 0.95 }}
                       aria-label={`${t('portfolio.view')} ${project.title}`}
+                      style={{ '--clr': 'hsl(257, 65%, 57%)' } as React.CSSProperties}
                     >
+                      <span className="portfolio-view-btn__icon-wrapper">
+                        <svg viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="portfolio-view-btn__icon-svg" width={10}>
+                          <path d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z" fill="currentColor" />
+                        </svg>
+                        <svg viewBox="0 0 14 15" fill="none" width={10} xmlns="http://www.w3.org/2000/svg" className="portfolio-view-btn__icon-svg portfolio-view-btn__icon-svg--copy">
+                          <path d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z" fill="currentColor" />
+                        </svg>
+                      </span>
                       {t('portfolio.view')}
-                      <ExternalLink className="h-3.5 w-3.5" />
                     </motion.button>
                   </div>
                 </motion.article>
@@ -163,6 +170,58 @@ function CategoryPortfolioInner() {
         )}
       </AnimatePresence>
 
+      <style>{`
+        .portfolio-view-btn {
+          line-height: 1;
+          text-decoration: none;
+          display: inline-flex;
+          border: none;
+          cursor: pointer;
+          align-items: center;
+          gap: 0.75rem;
+          background-color: var(--clr);
+          color: #fff;
+          border-radius: 10rem;
+          font-weight: 600;
+          padding: 0.75rem 1.5rem;
+          padding-left: 20px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          transition: background-color 0.3s;
+          font-size: 0.875rem;
+        }
+        .portfolio-view-btn__icon-wrapper {
+          flex-shrink: 0;
+          width: 25px;
+          height: 25px;
+          position: relative;
+          color: var(--clr);
+          background-color: #fff;
+          border-radius: 50%;
+          display: grid;
+          place-items: center;
+          overflow: hidden;
+        }
+        .portfolio-view-btn:hover {
+          background-color: #000;
+        }
+        .portfolio-view-btn:hover .portfolio-view-btn__icon-wrapper {
+          color: #000;
+        }
+        .portfolio-view-btn__icon-svg--copy {
+          position: absolute;
+          transform: translate(-150%, 150%);
+        }
+        .portfolio-view-btn:hover .portfolio-view-btn__icon-svg:first-child {
+          transition: transform 0.3s ease-in-out;
+          transform: translate(150%, -150%);
+        }
+        .portfolio-view-btn:hover .portfolio-view-btn__icon-svg--copy {
+          transition: transform 0.3s ease-in-out 0.1s;
+          transform: translate(0);
+        }
+      `}</style>
       <Footer />
     </main>
     </>
