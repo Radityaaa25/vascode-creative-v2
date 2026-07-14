@@ -3,10 +3,11 @@
 import { useMemo, useState, useEffect, type ComponentType } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Search, Plus, FileDown, Sheet, ArrowUpDown, MoreHorizontal, Trash2, Pencil, X,
+  Search, Plus, FileDown, Sheet, ArrowUpDown, MoreHorizontal, Pencil, X,
   Loader2, Mail, Building2, Calendar, CheckCircle2, MessageCircle, ExternalLink,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import AnimatedDeleteButton from "@/components/ui/animated-delete-button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -48,6 +49,8 @@ export default function ClientsPage() {
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<ClientCRM | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [bulkDelete, setBulkDelete] = useState(false);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   // Dropdown state
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -170,13 +173,14 @@ export default function ClientsPage() {
     }
   }
 
-  function handleBulkDelete() {
-    if (selected.length === 0) return;
-    Promise.all(selected.map((id) => deleteClient(id))).then(() => {
-      toast.success(`Deleted ${selected.length} clients`);
-      setSelected([]);
-      fetchClients();
-    });
+  async function executeBulkDelete() {
+    setBulkDeleting(true);
+    await Promise.all(selected.map((id) => deleteClient(id)));
+    setBulkDeleting(false);
+    setBulkDelete(false);
+    toast.success(`Deleted ${selected.length} clients`);
+    setSelected([]);
+    fetchClients();
   }
 
   function handleBulkExport() {
@@ -357,12 +361,7 @@ export default function ClientsPage() {
                         >
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setDeleteTarget(r); }}
-                          className="grid h-8 w-8 place-items-center rounded-full text-white/60 hover:bg-destructive/20 hover:text-destructive"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        <AnimatedDeleteButton size="sm" onClick={(e) => { e.stopPropagation(); setDeleteTarget(r); }} />
                         <div className="relative">
                           <button
                             onClick={(e) => { e.stopPropagation(); setOpenDropdown(openDropdown === r.id ? null : r.id); }}
@@ -385,7 +384,10 @@ export default function ClientsPage() {
                                 onClick={() => { setDeleteTarget(r); setOpenDropdown(null); }}
                                 className="flex w-full items-center gap-2 px-4 py-2 text-xs font-medium text-destructive hover:bg-destructive/10"
                               >
-                                <Trash2 className="h-3.5 w-3.5" /> Delete
+                                <svg viewBox="0 0 69 76" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5">
+                                  <path fill="currentColor" d="M20.8232 2.62734L19.9948 4.21304C19.8224 4.54309 19.4808 4.75 19.1085 4.75H4.92857C2.20246 4.75 0 6.87266 0 9.5C0 12.1273 2.20246 14.25 4.92857 14.25H64.0714C66.7975 14.25 69 12.1273 69 9.5C69 6.87266 66.7975 4.75 64.0714 4.75H49.8915C49.5192 4.75 49.1776 4.54309 49.0052 4.21305L48.1768 2.62734C47.3451 1.00938 45.6355 0 43.7719 0H25.2281C23.3645 0 21.6549 1.00938 20.8232 2.62734ZM64.0023 20.0648C64.0397 19.4882 63.5822 19 63.0044 19H5.99556C5.4178 19 4.96025 19.4882 4.99766 20.0648L8.19375 69.3203C8.44018 73.0758 11.6746 76 15.5712 76H53.4288C57.3254 76 60.5598 73.0758 60.8062 69.3203L64.0023 20.0648Z"/>
+                                </svg>
+                                Delete
                               </button>
                             </div>
                           )}
@@ -448,7 +450,7 @@ export default function ClientsPage() {
               </div>
               <div className="h-6 w-px bg-white/10" />
               <button onClick={handleBulkExport} className="text-sm font-medium hover:text-accent">Export</button>
-              <button onClick={handleBulkDelete} className="text-sm font-medium text-destructive hover:brightness-110">Delete</button>
+              <AnimatedDeleteButton size="sm" onClick={() => setBulkDelete(true)} />
               <button onClick={() => setSelected([])} className="grid h-7 w-7 place-items-center rounded-full text-white/60 hover:bg-white/10">
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -546,31 +548,46 @@ export default function ClientsPage() {
       </AlertDialog>
 
       {/* Delete confirmation */}
-      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
-        <AlertDialogContent className="glass-strong border-white/10">
-          <AlertDialogHeader>
-            <div className="mb-2 grid h-11 w-11 place-items-center rounded-full bg-destructive/20 text-destructive">
-              <Trash2 className="h-5 w-5" />
-            </div>
-            <AlertDialogTitle>Delete Client?</AlertDialogTitle>
-            <AlertDialogDescription className="text-white/70">
-              Are you sure you want to delete <span className="font-semibold text-foreground">{deleteTarget?.name}</span> from {deleteTarget?.company}? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-full border-white/10 bg-transparent hover:bg-white/5">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={deleting}
-              className="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+      <AnimatePresence>
+        {deleteTarget && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => !deleting && setDeleteTarget(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="w-full max-w-sm rounded-2xl border border-white/10 bg-background p-6 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
             >
-              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              <div className="mb-4 grid h-12 w-12 place-items-center rounded-full bg-destructive/20 text-destructive mx-auto">
+                <svg viewBox="0 0 69 76" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6">
+                  <path fill="currentColor" d="M20.8232 2.62734L19.9948 4.21304C19.8224 4.54309 19.4808 4.75 19.1085 4.75H4.92857C2.20246 4.75 0 6.87266 0 9.5C0 12.1273 2.20246 14.25 4.92857 14.25H64.0714C66.7975 14.25 69 12.1273 69 9.5C69 6.87266 66.7975 4.75 64.0714 4.75H49.8915C49.5192 4.75 49.1776 4.54309 49.0052 4.21305L48.1768 2.62734C47.3451 1.00938 45.6355 0 43.7719 0H25.2281C23.3645 0 21.6549 1.00938 20.8232 2.62734ZM64.0023 20.0648C64.0397 19.4882 63.5822 19 63.0044 19H5.99556C5.4178 19 4.96025 19.4882 4.99766 20.0648L8.19375 69.3203C8.44018 73.0758 11.6746 76 15.5712 76H53.4288C57.3254 76 60.5598 73.0758 60.8062 69.3203L64.0023 20.0648Z"/>
+                </svg>
+              </div>
+              <h3 className="mb-2 text-center text-lg font-bold">Delete Client?</h3>
+              <p className="mb-6 text-center text-sm text-white/60">
+                Are you sure you want to delete <span className="font-semibold text-foreground">{deleteTarget.name}</span> from {deleteTarget.company}? This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={deleting}
+                  className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium hover:bg-white/10 disabled:opacity-50"
+                >Cancel</button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="flex-1 rounded-xl bg-destructive py-2.5 text-sm font-semibold text-destructive-foreground hover:brightness-110 disabled:opacity-50"
+                >
+                  {deleting ? <Loader2 className="mx-auto h-4 w-4 animate-spin" /> : "Delete"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Drawer */}
       <AnimatePresence>
@@ -665,6 +682,46 @@ export default function ClientsPage() {
               </div>
             </motion.aside>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* Bulk delete confirmation */}
+      <AnimatePresence>
+        {bulkDelete && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => !bulkDeleting && setBulkDelete(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="w-full max-w-sm rounded-2xl border border-white/10 bg-background p-6 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mb-4 grid h-12 w-12 place-items-center rounded-full bg-destructive/20 text-destructive mx-auto">
+                <svg viewBox="0 0 69 76" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6">
+                  <path fill="currentColor" d="M20.8232 2.62734L19.9948 4.21304C19.8224 4.54309 19.4808 4.75 19.1085 4.75H4.92857C2.20246 4.75 0 6.87266 0 9.5C0 12.1273 2.20246 14.25 4.92857 14.25H64.0714C66.7975 14.25 69 12.1273 69 9.5C69 6.87266 66.7975 4.75 64.0714 4.75H49.8915C49.5192 4.75 49.1776 4.54309 49.0052 4.21305L48.1768 2.62734C47.3451 1.00938 45.6355 0 43.7719 0H25.2281C23.3645 0 21.6549 1.00938 20.8232 2.62734ZM64.0023 20.0648C64.0397 19.4882 63.5822 19 63.0044 19H5.99556C5.4178 19 4.96025 19.4882 4.99766 20.0648L8.19375 69.3203C8.44018 73.0758 11.6746 76 15.5712 76H53.4288C57.3254 76 60.5598 73.0758 60.8062 69.3203L64.0023 20.0648Z"/>
+                </svg>
+              </div>
+              <h3 className="mb-2 text-center text-lg font-bold">Delete {selected.length} clients?</h3>
+              <p className="mb-6 text-center text-sm text-white/60">This action cannot be undone.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setBulkDelete(false)}
+                  disabled={bulkDeleting}
+                  className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium hover:bg-white/10 disabled:opacity-50"
+                >Cancel</button>
+                <button
+                  onClick={executeBulkDelete}
+                  disabled={bulkDeleting}
+                  className="flex-1 rounded-xl bg-destructive py-2.5 text-sm font-semibold text-destructive-foreground hover:brightness-110 disabled:opacity-50"
+                >
+                  {bulkDeleting ? <Loader2 className="mx-auto h-4 w-4 animate-spin" /> : "Delete"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

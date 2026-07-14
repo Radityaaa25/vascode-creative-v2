@@ -5,7 +5,7 @@ import { MessageCircle, Instagram, Mail, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Contact = () => {
-  const { t, language } = useLanguage();
+  const { t, language, content } = useLanguage();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
@@ -15,7 +15,7 @@ const Contact = () => {
         ? "Hello Vascode Creative, I'm interested in discussing a project. Can we chat?"
         : 'Halo Vascode Creative, saya tertarik untuk mendiskusikan sebuah proyek. Bisakah kita mengobrol?';
     window.open(
-      `https://wa.me/6281412234070?text=${encodeURIComponent(message)}`,
+      `https://wa.me/${content.contact.whatsapp}?text=${encodeURIComponent(message)}`,
       '_blank'
     );
   };
@@ -30,13 +30,13 @@ const Contact = () => {
     {
       icon: Instagram,
       label: t('contact.instagram'),
-      action: () => window.open('https://www.instagram.com/vascode.creative?igsh=MWs2Z3c4d2gycWU3dA==', '_blank'),
+      action: () => window.open(`https://www.instagram.com/${content.contact.instagram}`, '_blank'),
       primary: false,
     },
     {
       icon: Mail,
       label: t('contact.email'),
-      action: () => window.open('mailto:vascodecreative@gmail.com', '_blank'),
+      action: () => window.open(`mailto:${content.contact.email}`, '_blank'),
       primary: false,
     },
   ];
@@ -129,10 +129,10 @@ const Contact = () => {
           >
             <p className="text-snow/40 text-sm mb-2">Or email us directly at</p>
             <a
-              href="mailto:vascodecreative@gmail.com"
+              href={`mailto:${content.contact.email}`}
               className="text-snow hover:text-volt transition-colors font-medium"
             >
-              vascodecreative@gmail.com
+              {content.contact.email}
             </a>
           </motion.div>
         </div>

@@ -11,7 +11,7 @@ const Hero = () => {
       : "Halo Vascode Creative, saya tertarik untuk memulai proyek dengan Anda. Bisa kita diskusikan?";
 
     const message = encodeURIComponent(messageText);
-    window.open(`https://wa.me/6281412234070?text=${message}`, '_blank');
+    window.open(`https://wa.me/6281412234070?text=${message}`, '_blank', 'noopener,noreferrer');
   };
 
   const scrollToPortfolio = () => {
@@ -108,6 +108,7 @@ const Hero = () => {
             className="group flex items-center gap-2 px-8 py-4 rounded-full bg-volt text-void font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:shadow-volt/30"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            aria-label={t('hero.cta1')}
           >
             {t('hero.cta1')}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -115,14 +116,68 @@ const Hero = () => {
 
           <motion.button
             onClick={scrollToPortfolio}
-            className="group flex items-center gap-2 px-8 py-4 rounded-full border-2 border-snow/20 text-snow font-semibold text-lg transition-all duration-300 hover:bg-snow/5 hover:border-snow/40"
-            whileHover={{ scale: 1.05 }}
+            className="hero-cta-anim flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-lg"
             whileTap={{ scale: 0.95 }}
+            aria-label={t('hero.cta2')}
           >
             <Play className="w-5 h-5" />
             {t('hero.cta2')}
           </motion.button>
         </motion.div>
+
+        <style>{`
+          .hero-cta-anim {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transition: all 0.2s ease-in;
+            cursor: pointer;
+          }
+          .hero-cta-anim:before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) scaleY(1) scaleX(1.25);
+            top: 100%;
+            width: 140%;
+            height: 180%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: block;
+            transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+            z-index: -1;
+          }
+          .hero-cta-anim:after {
+            content: "";
+            position: absolute;
+            left: 55%;
+            transform: translateX(-50%) scaleY(1) scaleX(1.45);
+            top: 180%;
+            width: 160%;
+            height: 190%;
+            background-color: hsl(257, 65%, 57%);
+            border-radius: 50%;
+            display: block;
+            transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+            z-index: -1;
+          }
+          .hero-cta-anim:hover {
+            color: #ffffff;
+            border-color: hsl(257, 65%, 57%);
+          }
+          .hero-cta-anim:hover:before {
+            top: -35%;
+            background-color: hsl(257, 65%, 57%);
+            transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+          }
+          .hero-cta-anim:hover:after {
+            top: -45%;
+            background-color: hsl(257, 65%, 57%);
+            transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+          }
+        `}</style>
 
         {/* Scroll Indicator */}
         <motion.div

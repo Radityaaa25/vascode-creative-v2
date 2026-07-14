@@ -5,11 +5,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import logoIcon from '@/assets/logo-icon.png';
 
 const About = () => {
-  const { t } = useLanguage();
+  const { t, content } = useLanguage();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
-  const stats = [
+  const stats = content.stats.length > 0 ? content.stats : [
     { value: t('about.stat1.value'), label: t('about.stat1.label') },
     { value: t('about.stat2.value'), label: t('about.stat2.label') },
     { value: t('about.stat3.value'), label: t('about.stat3.label') },
@@ -112,6 +112,7 @@ const About = () => {
                         src={logoIcon} 
                         alt="Vascode Logo" 
                         className="w-full h-full object-contain drop-shadow-2xl"
+                        loading="lazy" width={400} height={400}
                     />
                 </motion.div>
                 {/* --- SELESAI PENGGANTIAN --- */}

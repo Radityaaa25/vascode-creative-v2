@@ -1,5 +1,5 @@
-import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Home, AlertCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,18 +8,18 @@ const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
+    document.title = "404 - Page Not Found | Vascode Creative";
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
   }, [location.pathname]);
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-gradient-hero px-4 overflow-hidden">
+    <main id="main-content" className="relative flex min-h-screen items-center justify-center bg-gradient-hero px-4 overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="relative text-center max-w-2xl w-full z-10"
       >
-        {/* Animated 404 Number */}
         <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -31,7 +31,6 @@ const NotFound = () => {
           </h1>
         </motion.div>
 
-        {/* Icon */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -48,16 +47,15 @@ const NotFound = () => {
           </div>
         </motion.div>
 
-        {/* Content Card */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
           className="glass rounded-2xl p-8 md:p-12 mb-8"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+          <p className="text-2xl md:text-3xl font-bold mb-4 text-foreground">
             Oops! Page Not Found
-          </h2>
+          </p>
           <p className="text-lg md:text-xl text-muted-foreground mb-2">
             The page you're looking for doesn't exist or has been moved.
           </p>
@@ -65,59 +63,34 @@ const NotFound = () => {
             Path: <code className="px-2 py-1 bg-muted rounded text-primary">{location.pathname}</code>
           </p>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button
-              asChild
-              size="lg"
-              className="btn-primary group"
-            >
+            <Button asChild size="lg" className="btn-primary group">
               <Link to="/">
                 <Home className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 Return to Home
               </Link>
             </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="group"
-              onClick={() => window.history.back()}
-            >
+            <Button variant="outline" size="lg" className="group" onClick={() => window.history.back()}>
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
               Go Back
             </Button>
           </div>
         </motion.div>
 
-        {/* Floating Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl"
-            animate={{
-              y: [0, -30, 0],
-              x: [0, 20, 0],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            animate={{ y: [0, -30, 0], x: [0, 20, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
             className="absolute bottom-20 right-10 w-40 h-40 bg-secondary/10 rounded-full blur-3xl"
-            animate={{
-              y: [0, 30, 0],
-              x: [0, -20, 0],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            animate={{ y: [0, 30, 0], x: [0, -20, 0] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
       </motion.div>
-    </div>
+    </main>
   );
 };
 

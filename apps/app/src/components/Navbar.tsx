@@ -68,6 +68,7 @@ const Navbar = () => {
               className="h-8 w-8 md:h-10 md:w-10 object-contain"
               whileHover={{ rotate: 10 }}
               transition={{ duration: 0.3 }}
+              loading="eager" width={40} height={40}
             />
             
             {/* Bagian Teks Baru */}

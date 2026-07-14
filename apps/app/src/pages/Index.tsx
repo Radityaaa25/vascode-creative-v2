@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { LanguageProvider } from '@/contexts/LanguageContext';
+import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
@@ -7,16 +6,14 @@ import Services from '@/components/Services';
 import Portfolio from '@/components/Portfolio';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 
-const Index = () => {
-  useEffect(() => {
-    // Update page metadata for SEO
-    document.title = 'Vascode Creative | Creative Agency & Production House';
-  }, []);
-
+function IndexInner() {
+  const { t } = useLanguage();
   return (
-    <LanguageProvider>
-      <main className="min-h-screen overflow-x-hidden">
+    <>
+      <SEO title={t('hero.title1') + ' ' + t('hero.title2')} description={t('hero.description')} />
+      <main id="main-content" className="min-h-screen overflow-x-hidden">
         <Navbar />
         <Hero />
         <About />
@@ -25,8 +22,14 @@ const Index = () => {
         <Contact />
         <Footer />
       </main>
-    </LanguageProvider>
+    </>
   );
-};
+}
+
+const Index = () => (
+  <LanguageProvider>
+    <IndexInner />
+  </LanguageProvider>
+);
 
 export default Index;

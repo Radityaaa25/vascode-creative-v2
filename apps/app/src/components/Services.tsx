@@ -1,66 +1,36 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Globe, Video, Camera, Palette, Film, ArrowRight } from 'lucide-react';
+import { Globe, Video, Camera, Palette, Film, Monitor, Smartphone, PenTool, Image, Music, Code, Layout, Megaphone, BookOpen, ShoppingBag, Users, MessageCircle, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Globe, Video, Camera, Palette, Film, Monitor, Smartphone,
+  PenTool, Image, Music, Code, Layout, Megaphone, BookOpen,
+  ShoppingBag, Users, MessageCircle,
+};
+
 const Services = () => {
-  const { t, language } = useLanguage();
+  const { t, content } = useLanguage();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
-  const services = [
-    {
-      icon: Globe,
-      title: t('services.web.title'),
-      description: t('services.web.description'),
-      whatsappMessage:
-        language === 'en'
-          ? 'Hello Vascode Creative, I would like to book Website Development services.\n\nHere are my details:\nName:\nCompany/Brand:\nWebsite Type (e.g. Landing Page/Company Profile):\nReference/Inspiration:\nBudget Estimate:'
-          : 'Halo Vascode Creative, saya ingin memesan layanan Pembuatan Website.\n\nBerikut detail saya:\nNama:\nNama Bisnis/Brand:\nJenis Website (misal: Landing Page/Profil Perusahaan):\nReferensi/Contoh Website:\nEstimasi Budget:',
-    },
-    {
-      icon: Video,
-      title: t('services.video.title'),
-      description: t('services.video.description'),
-      whatsappMessage:
-        language === 'en'
-          ? 'Hello Vascode Creative, I would like to book Video Ads Production services.\n\nHere are my details:\nName:\nProduct/Brand Name:\nVideo Duration (e.g. 15s/30s):\nTarget Platform (e.g. TikTok/IG Reels):\nReference:'
-          : 'Halo Vascode Creative, saya ingin memesan layanan Produksi Video Ads.\n\nBerikut detail saya:\nNama:\nNama Produk/Brand:\nDurasi Video (misal: 15s/30s):\nPlatform (misal: TikTok/IG Reels):\nReferensi Video:',
-    },
-    {
-      icon: Camera,
-      title: t('services.photo.title'),
-      description: t('services.photo.description'),
-      whatsappMessage:
-        language === 'en'
-          ? 'Hello Vascode Creative, I would like to book Photography & Videography services.\n\nHere are my details:\nName:\nEvent Type:\nDate & Time:\nLocation:\nSpecial Request:'
-          : 'Halo Vascode Creative, saya ingin memesan layanan Fotografi & Videografi.\n\nBerikut detail saya:\nNama:\nJenis Acara:\nTanggal & Jam:\nLokasi:\nRequest Khusus:',
-    },
-    {
-      icon: Film,
-      title: t('services.editing.title'),
-      description: t('services.editing.description'),
-      whatsappMessage:
-        language === 'en'
-          ? 'Hello Vascode Creative, I would like to book Video & Photo Editing services.\n\nHere are my details:\nName:\nNumber of Files:\nTotal Duration:\nDesired Editing Style:\nDeadline:'
-          : 'Halo Vascode Creative, saya ingin memesan layanan Editing Video & Foto.\n\nBerikut detail saya:\nNama:\nJumlah File:\nTotal Durasi:\nGaya Editing yang diinginkan:\nDeadline:',
-    },
-    {
-      icon: Palette,
-      title: t('services.design.title'),
-      description: t('services.design.description'),
-      whatsappMessage:
-        language === 'en'
-          ? 'Hello Vascode Creative, I would like to book Graphic Design services.\n\nHere are my details:\nName:\nDesign Type (e.g. Logo/Feed/Banner):\nBrand Description:\nColor Preference:\nVisual Reference:'
-          : 'Halo Vascode Creative, saya ingin memesan layanan Desain Grafis.\n\nBerikut detail saya:\nNama:\nJenis Desain (misal: Logo/Feed/Banner):\nDeskripsi Brand:\nPilihan Warna:\nReferensi Visual:',
-    },
+  const services = content.services.length > 0 ? content.services.map((s) => ({
+    icon: ICON_MAP[s.icon] || Globe,
+    title: s.title,
+    description: s.description,
+    whatsappMessage: s.waTemplate,
+  })) : [
+    { icon: Globe, title: t('services.web.title'), description: t('services.web.description'), whatsappMessage: '' },
+    { icon: Video, title: t('services.video.title'), description: t('services.video.description'), whatsappMessage: '' },
+    { icon: Camera, title: t('services.photo.title'), description: t('services.photo.description'), whatsappMessage: '' },
+    { icon: Film, title: t('services.editing.title'), description: t('services.editing.description'), whatsappMessage: '' },
+    { icon: Palette, title: t('services.design.title'), description: t('services.design.description'), whatsappMessage: '' },
   ];
 
   const openWhatsApp = (message: string) => {
-    // encodeURIComponent akan memastikan karakter enter (\n) terbaca dengan benar di URL WhatsApp
     window.open(
-      `https://wa.me/6281412234070?text=${encodeURIComponent(message)}`,
+      `https://wa.me/${content.contact.whatsapp}?text=${encodeURIComponent(message)}`,
       '_blank'
     );
   };
