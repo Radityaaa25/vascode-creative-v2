@@ -36,7 +36,7 @@ const Services = () => {
   };
 
   return (
-    <section id="services" className="section-padding bg-void" ref={ref}>
+    <section id="services" className="section-padding" ref={ref}>
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-16">

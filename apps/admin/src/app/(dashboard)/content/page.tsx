@@ -4,8 +4,9 @@ import { useEffect, useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
-import { Plus, Save, Pencil, X, Loader2, Globe, Video, Camera, Palette, Film, Monitor, Smartphone, PenTool, Image, Music, Code, Layout, Megaphone, BookOpen, ShoppingBag, Users, MessageCircle, Instagram, Mail, ExternalLink, Eye, EyeOff } from "lucide-react"
+import { Plus, Save, X, Loader2, Globe, Video, Camera, Palette, Film, Monitor, Smartphone, PenTool, Image, Music, Code, Layout, Megaphone, BookOpen, ShoppingBag, Users, MessageCircle, Instagram, Mail, ExternalLink, Eye, EyeOff } from "lucide-react"
 import AnimatedDeleteButton from "@/components/ui/animated-delete-button"
+import AnimatedEditButton from "@/components/ui/animated-edit-button"
 import { getSettings, updateSettings, getStats, createStat, updateStat, deleteStat, getServices, createService, updateService, deleteService, getProjects, createProject, updateProject, deleteProject, type SettingRow, type StatRow, type ServiceRow, type ProjectRow } from "@/app/actions/content"
 
 type Tab = "hero" | "stats" | "services" | "portfolio" | "contact"
@@ -316,7 +317,7 @@ function StatsTab() {
                   <span className="rounded-full bg-accent/20 px-2.5 py-0.5 text-xs font-bold text-accent">{s.value}</span>
                 </td>
                 <td className="px-3 py-3 text-right">
-                  <button onClick={() => { setEditId(s.id); setForm({ label_id: s.label_id, label_en: s.label_en, value: s.value }) }} className="mr-1 grid h-7 w-7 place-items-center rounded-full text-white/50 hover:bg-white/10 hover:text-foreground"><Pencil className="h-3.5 w-3.5" /></button>
+                  <AnimatedEditButton size="sm" onClick={() => { setEditId(s.id); setForm({ label_id: s.label_id, label_en: s.label_en, value: s.value }) }} />
                   <AnimatedDeleteButton size="sm" onClick={() => setDeleteTarget(s.id)} />
                 </td>
               </tr>
@@ -423,7 +424,7 @@ function ServicesTab() {
                   <td className="px-3 py-3 font-medium">{s.title_id}</td>
                   <td className="px-3 py-3 text-white/70">{s.title_en}</td>
                   <td className="px-3 py-3 text-right">
-                    <button onClick={() => { setEditId(s.id); setForm({ title_id: s.title_id, title_en: s.title_en, icon: s.icon, description_id: s.description_id, description_en: s.description_en, wa_template_id: s.wa_template_id, wa_template_en: s.wa_template_en }) }} className="mr-1 grid h-7 w-7 place-items-center rounded-full text-white/50 hover:bg-white/10 hover:text-foreground"><Pencil className="h-3.5 w-3.5" /></button>
+                    <AnimatedEditButton size="sm" onClick={() => { setEditId(s.id); setForm({ title_id: s.title_id, title_en: s.title_en, icon: s.icon, description_id: s.description_id, description_en: s.description_en, wa_template_id: s.wa_template_id, wa_template_en: s.wa_template_en }) }} />
                     <AnimatedDeleteButton size="sm" onClick={() => setDeleteTarget(s.id)} />
                   </td>
                 </tr>
@@ -624,7 +625,7 @@ function PortfolioTab() {
                 <td className="px-3 py-3"><span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-medium text-primary">{p.category}</span></td>
                 <td className="px-3 py-3 text-xs text-white/50">{p.tech_stack || "—"}</td>
                 <td className="px-3 py-3 text-right">
-                  <button onClick={() => { setEditId(p.id); setForm({ title_id: p.title_id, title_en: p.title_en, category: p.category, description_id: p.description_id, description_en: p.description_en, image_url: p.image_url || "", tech_stack: p.tech_stack || "", project_url: p.project_url || "" }) }} className="mr-1 grid h-7 w-7 place-items-center rounded-full text-white/50 hover:bg-white/10 hover:text-foreground"><Pencil className="h-3.5 w-3.5" /></button>
+                  <AnimatedEditButton size="sm" onClick={() => { setEditId(p.id); setForm({ title_id: p.title_id, title_en: p.title_en, category: p.category, description_id: p.description_id, description_en: p.description_en, image_url: p.image_url || "", tech_stack: p.tech_stack || "", project_url: p.project_url || "" }) }} />
                   <AnimatedDeleteButton size="sm" onClick={() => setDeleteTarget(p.id)} />
                 </td>
               </tr>

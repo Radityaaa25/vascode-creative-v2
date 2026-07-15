@@ -16,7 +16,7 @@ const About = () => {
   ];
 
   return (
-    <section id="about" className="section-padding bg-void/95" ref={ref}>
+    <section id="about" className="section-padding" ref={ref}>
       <div className="container-custom">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Content */}

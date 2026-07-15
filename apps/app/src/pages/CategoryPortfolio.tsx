@@ -6,6 +6,7 @@ import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
+import BackgroundEffects from '@/components/BackgroundEffects';
 
 function CategoryPortfolioInner() {
   const { category } = useParams<{ category: string }>();
@@ -26,8 +27,9 @@ function CategoryPortfolioInner() {
     <>
       <SEO title={pageTitle} canonical={`https://vascode.my.id/portfolio/${category}`} />
       <main id="main-content" className="min-h-screen overflow-x-hidden">
+        <BackgroundEffects />
         <Navbar />
-      <section className="section-padding bg-void pt-28">
+      <section className="section-padding pt-28">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 10 }}

@@ -35,7 +35,7 @@ const Footer = () => {
   const uid = useId().replace(/[:.]/g, '');
 
   return (
-    <footer className="bg-void border-t border-snow/10">
+    <footer className="border-t border-snow/10">
       <style>{`
         .${uid}-wrapper {
           display: inline-flex;

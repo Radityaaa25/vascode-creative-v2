@@ -7,7 +7,8 @@ import {
   Loader2, Mail, Building2, Calendar, CheckCircle2, MessageCircle, ExternalLink,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import AnimatedDeleteButton from "@/components/ui/animated-delete-button";
+import AnimatedDeleteButton from "@/components/ui/animated-delete-button"
+import AnimatedEditButton from "@/components/ui/animated-edit-button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -355,12 +356,7 @@ export default function ClientsPage() {
                     <td className="px-4 py-4 text-white/60 whitespace-nowrap">{r.joined_at}</td>
                     <td className="px-4 py-4 relative" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-1">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); openEditModal(r); }}
-                          className="grid h-8 w-8 place-items-center rounded-full text-white/60 hover:bg-white/10 hover:text-foreground"
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                        </button>
+                        <AnimatedEditButton size="sm" onClick={(e) => { e.stopPropagation(); openEditModal(r); }} />
                         <AnimatedDeleteButton size="sm" onClick={(e) => { e.stopPropagation(); setDeleteTarget(r); }} />
                         <div className="relative">
                           <button

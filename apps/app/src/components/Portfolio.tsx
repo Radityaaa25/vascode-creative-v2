@@ -43,7 +43,7 @@ const Portfolio = () => {
   const visibleProjects = filteredAll.slice(0, MAX_VISIBLE);
 
   return (
-    <section id="portfolio" className="section-padding bg-void" ref={ref}>
+    <section id="portfolio" className="section-padding" ref={ref}>
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-12">

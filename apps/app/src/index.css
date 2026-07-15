@@ -51,6 +51,9 @@
     --gradient-primary: linear-gradient(135deg, hsl(257 65% 57%), hsl(257 65% 45%));
     --gradient-accent: linear-gradient(135deg, hsl(77 100% 50%), hsl(77 100% 40%));
     --gradient-hero: linear-gradient(180deg, hsl(240 3% 16%) 0%, hsl(257 65% 20%) 100%);
+    
+    /* Grid pattern line color */
+    --grid-line: #ffffff05;
   }
 
   .dark {
@@ -116,6 +119,31 @@
     --glass-border: 0 0% 0% / 0.08;
 
     --gradient-hero: linear-gradient(180deg, hsl(0 0% 96%) 0%, hsl(257 65% 92%) 100%);
+    
+    /* Grid pattern line color for light mode */
+    --grid-line: #00000006;
+
+    /* Boost card/border visibility in light mode */
+    --surface: 0 0% 0%;
+  }
+
+  .light .bg-snow\/5 {
+    background-color: hsl(0 0% 0% / 0.06);
+  }
+  .light .bg-snow\/10 {
+    background-color: hsl(0 0% 0% / 0.08);
+  }
+  .light .border-snow\/10 {
+    border-color: hsl(0 0% 0% / 0.12);
+  }
+  .light .border-snow\/20 {
+    border-color: hsl(0 0% 0% / 0.18);
+  }
+  .light .hover\:bg-snow\/5:hover {
+    background-color: hsl(0 0% 0% / 0.06);
+  }
+  .light .hover\:border-snow\/40:hover {
+    border-color: hsl(0 0% 0% / 0.3);
   }
 }
 
@@ -208,4 +236,23 @@
   .text-volt {
     color: hsl(var(--secondary));
   }
+}
+
+/* View Transition API - circle reveal animation */
+::view-transition-old(root) {
+  animation: 450ms ease-out both vt-out;
+}
+
+::view-transition-new(root) {
+  animation: 450ms ease-out both vt-in;
+}
+
+@keyframes vt-in {
+  from { clip-path: circle(0% at 50% 50%); }
+  to { clip-path: circle(150% at 50% 50%); }
+}
+
+@keyframes vt-out {
+  from { clip-path: circle(150% at 50% 50%); }
+  to { clip-path: circle(0% at 50% 50%); }
 }

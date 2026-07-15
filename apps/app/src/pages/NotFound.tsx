@@ -3,6 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Home, AlertCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import BackgroundEffects from "@/components/BackgroundEffects";
 
 const NotFound = () => {
   const location = useLocation();
@@ -13,7 +14,8 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <main id="main-content" className="relative flex min-h-screen items-center justify-center bg-gradient-hero px-4 overflow-hidden">
+    <main id="main-content" className="relative flex min-h-screen items-center justify-center px-4 overflow-hidden">
+      <BackgroundEffects />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

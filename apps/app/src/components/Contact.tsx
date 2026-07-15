@@ -42,7 +42,7 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="section-padding bg-void relative overflow-hidden" ref={ref}>
+    <section id="contact" className="section-padding relative overflow-hidden" ref={ref}>
       {/* Background Elements */}
       <motion.div
         className="absolute top-0 right-0 w-96 h-96 rounded-full bg-primary/10 blur-3xl"
