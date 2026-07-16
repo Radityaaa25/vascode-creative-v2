@@ -131,7 +131,7 @@ function CategoryPortfolioInner() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl border border-snow/10 bg-void shadow-2xl"
+              className="relative w-full max-w-2xl rounded-3xl border border-snow/10 bg-void shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="aspect-video overflow-hidden">
@@ -153,18 +153,23 @@ function CategoryPortfolioInner() {
                     </div>
                   </div>
                 )}
-                {(selectedProject.projectUrl || selectedProject.link) && (
-                  <motion.a
-                    href={selectedProject.projectUrl || selectedProject.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition-opacity hover:opacity-90"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {t('portfolio.view')}
-                    <ExternalLink className="h-4 w-4" />
-                  </motion.a>
+                {selectedProject.links && selectedProject.links.length > 0 && (
+                  <div className="flex flex-wrap gap-3">
+                    {selectedProject.links.map((link: { label: string; url: string }, i: number) => (
+                      <motion.a
+                        key={i}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {link.label}
+                        <ExternalLink className="h-4 w-4" />
+                      </motion.a>
+                    ))}
+                  </div>
                 )}
               </div>
             </motion.div>

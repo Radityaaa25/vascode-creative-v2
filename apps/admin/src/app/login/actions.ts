@@ -7,14 +7,19 @@ export async function loginAction(formData: FormData) {
   const username = formData.get('username')
   const password = formData.get('password')
 
-  const validUsername = process.env.ADMIN_USERNAME || 'admin'
-  const validPassword = process.env.ADMIN_PASSWORD || 'password_rahasia_lo'
+  const validUsername = process.env.ADMIN_USERNAME
+  const validPassword = process.env.ADMIN_PASSWORD
+  const jwtSecret = process.env.JWT_SECRET
+
+  if (!validUsername || !validPassword || !jwtSecret) {
+    console.error('Missing ADMIN_USERNAME, ADMIN_PASSWORD, or JWT_SECRET env vars')
+    return { success: false, error: 'Server configuration error' }
+  }
 
   if (username === validUsername && password === validPassword) {
-    const secret = new TextEncoder().encode(validPassword)
+    const secret = new TextEncoder().encode(jwtSecret)
     const alg = 'HS256'
     
-    // Bikin JWT yang umurnya 1 hari
     const token = await new SignJWT({ user: username })
       .setProtectedHeader({ alg })
       .setIssuedAt()

@@ -37,19 +37,16 @@ export async function getDashboardData(timeRange: string = '12m') {
 
     const pastDateIso = pastDate.toISOString()
 
-    // 1. Fetch Clients (Filter by start_date or created_at)
-    // We use start_date for clients if available, fallback to created_at
     const { data: clients, error: clientsError } = await supabaseAdmin
       .from('clients')
-      .select('*')
-      .gte('created_at', pastDateIso) // Only fetch data within the selected time range
+      .select('id, client_name, project_name, project_value, status, created_at, start_date')
+      .gte('created_at', pastDateIso)
 
     if (clientsError) throw clientsError
 
-    // 2. Fetch Projects (from projects table)
     const { data: projects, error: projectsError } = await supabaseAdmin
       .from('projects')
-      .select('*')
+      .select('id, title_id, created_at')
       .gte('created_at', pastDateIso)
 
     if (projectsError) throw projectsError
@@ -61,39 +58,31 @@ export async function getDashboardData(timeRange: string = '12m') {
     // Revenue from clients table (project_value)
     const totalRevenue = clients?.reduce((acc, client) => acc + (Number(client.project_value) || 0), 0) || 0
 
-    // Chart Data - Revenue by Month (Dummy logic based on start_date or created_at)
     const monthlyRevenue: Record<string, number> = {}
     clients?.forEach(client => {
-      // Use start_date if it exists, otherwise use created_at
       const dateString = client.start_date || client.created_at;
       if (dateString) {
-        const month = new Date(dateString).toLocaleString('en-US', { month: 'short' })
-        monthlyRevenue[month] = (monthlyRevenue[month] || 0) + (Number(client.project_value) || 0)
+        const d = new Date(dateString)
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        monthlyRevenue[key] = (monthlyRevenue[key] || 0) + (Number(client.project_value) || 0)
       }
     })
 
-    const chartData = Object.entries(monthlyRevenue).map(([name, Total]) => ({ name, Total }))
-    // If empty, provide some dummy data so chart doesn't look empty
-    if (chartData.length === 0) {
-      chartData.push(
-        { name: "Jan", Total: 0 },
-        { name: "Feb", Total: 0 },
-        { name: "Mar", Total: 0 }
-      )
-    }
+    const shortMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    const chartData = Object.entries(monthlyRevenue)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, Total]) => {
+        const m = shortMonths[parseInt(key.split('-')[1], 10) - 1] || key
+        return { name: `${m} ${key.split('-')[0]}`, Total }
+      })
 
-    // Client Status Data
     const statusCounts: Record<string, number> = {}
     clients?.forEach(client => {
-      const status = client.status || 'Unknown'
-      statusCounts[status] = (statusCounts[status] || 0) + 1
+      const s = client.status || 'Unknown'
+      statusCounts[s] = (statusCounts[s] || 0) + 1
     })
     
     const clientStatusData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }))
-    // If empty, provide dummy
-    if (clientStatusData.length === 0) {
-      clientStatusData.push({ name: "No Data", value: 1 })
-    }
 
     // Recent Activity (Combine latest clients and projects)
     const recentActivity: ActivityItem[] = []

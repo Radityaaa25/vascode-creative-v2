@@ -10,9 +10,8 @@ interface Project {
   description: string;
   category: string;
   image: string;
-  link?: string;
+  links?: { label: string; url: string }[];
   techStack?: string;
-  projectUrl?: string;
 }
 
 const MAX_VISIBLE = 6;
@@ -23,6 +22,7 @@ const Portfolio = () => {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const filters: { key: string; label: string }[] = [
     { key: 'all', label: t('portfolio.all') },
@@ -30,10 +30,10 @@ const Portfolio = () => {
   ];
 
   const projects: Project[] = content.projects.length > 0 ? content.projects : [
-    { id: 1, title: 'E-Commerce Platform', description: 'A modern e-commerce platform with seamless shopping experience.', category: 'Website', image: 'https://images.unsplash.com/photo-1661956602116-aa6865609028?w=800&auto=format&fit=crop&q=60', link: '#' },
+    { id: 1, title: 'E-Commerce Platform', description: 'A modern e-commerce platform with seamless shopping experience.', category: 'Website', image: 'https://images.unsplash.com/photo-1661956602116-aa6865609028?w=800&auto=format&fit=crop&q=60', links: [{ label: 'Demo', url: '#' }] },
     { id: 2, title: 'Brand Photoshoot', description: 'Professional product photography for a lifestyle brand.', category: 'Foto/Video', image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&auto=format&fit=crop&q=60' },
     { id: 3, title: 'Corporate Identity', description: 'Complete brand identity design including logo, color palette, and typography.', category: 'Desain', image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&auto=format&fit=crop&q=60' },
-    { id: 4, title: 'Restaurant Website', description: 'Elegant website design for a premium restaurant with online reservation system.', category: 'Website', image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=60', link: '#' },
+    { id: 4, title: 'Restaurant Website', description: 'Elegant website design for a premium restaurant with online reservation system.', category: 'Website', image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=60', links: [{ label: 'Demo', url: '#' }] },
     { id: 5, title: 'Event Coverage', description: 'Complete photo and video coverage for corporate events.', category: 'Foto/Video', image: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=800&auto=format&fit=crop&q=60' },
     { id: 6, title: 'Social Media Campaign', description: 'Creative social media content for brand awareness campaigns.', category: 'Desain', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&auto=format&fit=crop&q=60' },
   ];
@@ -201,30 +201,36 @@ const Portfolio = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-void border border-snow/10 rounded-3xl shadow-2xl"
+              className="relative w-full max-w-2xl bg-void border border-snow/10 rounded-3xl shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Image */}
-              <div className="aspect-video overflow-hidden">
+              <div 
+                className="w-full h-56 sm:h-64 md:h-72 overflow-hidden cursor-pointer relative group"
+                onClick={() => setPreviewImage(selectedProject.image)}
+              >
                 <img
                   src={selectedProject.image}
                   alt={selectedProject.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
                 />
+                <div className="absolute inset-0 bg-void/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="bg-void/80 text-snow px-4 py-2 rounded-full text-sm backdrop-blur-sm shadow-xl">Lihat Penuh</span>
+                </div>
               </div>
 
               {/* Content */}
-              <div className="p-6 md:p-8">
-                <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium mb-4">
+              <div className="p-5 md:p-6">
+                <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium mb-2">
                   {selectedProject.category}
                 </span>
 
-                <h3 className="text-2xl md:text-3xl font-bold text-snow mb-4">
+                <h3 className="text-2xl font-bold text-snow mb-2">
                   {selectedProject.title}
                 </h3>
 
-                <p className="text-snow/70 leading-relaxed mb-6">
+                <p className="text-snow/70 leading-relaxed text-sm mb-4">
                   {selectedProject.description}
                 </p>
 
@@ -241,21 +247,58 @@ const Portfolio = () => {
                   </div>
                 )}
 
-                {(selectedProject.projectUrl || selectedProject.link) && (
-                  <motion.a
-                    href={selectedProject.projectUrl || selectedProject.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {t('portfolio.view')}
-                    <ExternalLink className="w-4 h-4" />
-                  </motion.a>
+                {selectedProject.links && selectedProject.links.length > 0 && (
+                  <div className="flex flex-wrap gap-3">
+                    {selectedProject.links.map((link, i) => (
+                      <motion.a
+                        key={i}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {link.label}
+                        <ExternalLink className="w-4 h-4" />
+                      </motion.a>
+                    ))}
+                  </div>
                 )}
               </div>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Fullscreen Image Preview Modal */}
+      <AnimatePresence>
+        {previewImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-void/95 backdrop-blur-md"
+            onClick={() => setPreviewImage(null)}
+          >
+            <motion.button
+              onClick={() => setPreviewImage(null)}
+              className="fixed top-4 right-4 z-[110] w-12 h-12 rounded-full bg-void/80 text-snow flex items-center justify-center hover:bg-white/10 transition-colors border border-snow/10"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <X className="w-6 h-6" />
+            </motion.button>
+            <motion.img
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              src={previewImage}
+              alt="Fullscreen Preview"
+              className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
           </motion.div>
         )}
       </AnimatePresence>

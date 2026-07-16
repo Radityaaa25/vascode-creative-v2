@@ -14,8 +14,11 @@ export async function middleware(request: NextRequest) {
 
   try {
     if (token) {
-      // Verify token
-      const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD || 'default_secret')
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET || '')
+      if (!process.env.JWT_SECRET) {
+        console.error('JWT_SECRET not set in middleware')
+        return NextResponse.redirect(new URL('/login', request.nextUrl))
+      }
       await jwtVerify(token, secret)
       
       // If valid and trying to access login, redirect to dashboard

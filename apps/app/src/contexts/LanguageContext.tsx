@@ -5,8 +5,12 @@ type Language = 'en' | 'id';
 
 export type ContentStats = { label: string; value: string }[];
 export type ContentService = { icon: string; title: string; description: string; waTemplate: string };
-export type ContentProject = { id: string; title: string; description: string; category: string; image: string; link?: string; techStack?: string; projectUrl?: string };
+export type ContentProject = { id: string; title: string; description: string; category: string; image: string; links?: { label: string; url: string }[]; techStack?: string };
 export type ContentContact = { whatsapp: string; email: string; instagram: string };
+export type ContentHowToOrderStep = { step_number: number; title_id: string; title_en: string; description_id: string; description_en: string; icon: string };
+export type ContentFAQ = { question_id: string; question_en: string; answer_id: string; answer_en: string };
+export type ContentSocialLink = { platform: string; icon: string; url: string; label_id: string; label_en: string };
+export type ContentTool = { id: string; name: string; logo_url: string };
 
 interface LanguageContextType {
   language: Language;
@@ -18,6 +22,11 @@ interface LanguageContextType {
     projects: ContentProject[];
     contact: ContentContact;
     categories: string[];
+    howToOrderSteps: ContentHowToOrderStep[];
+    faq: ContentFAQ[];
+    socialLinks: ContentSocialLink[];
+    tools: ContentTool[];
+    settings: Record<string, string>;
   };
   loading: boolean;
 }
@@ -37,6 +46,9 @@ const translations: Record<Language, Record<string, string>> = {
     'about.stat3.value': '100%', 'about.stat3.label': 'Satisfaction Rate',
     'services.subtitle': 'Our Services', 'services.title': 'What We Do Best',
     'services.description': 'From concept to creation, we deliver comprehensive digital solutions tailored to your needs.',
+    'cta.book': 'Book Now',
+    'howtoorder.title': 'How to Order',
+    'faq.title': 'FAQ',
     'services.web.title': 'Website Development', 'services.web.description': 'Custom, responsive websites that drive conversions and elevate your online presence.',
     'services.video.title': 'Video Ads Production', 'services.video.description': 'Eye-catching video content for Instagram, Reels, and TikTok that captures attention.',
     'services.photo.title': 'Photography & Videography', 'services.photo.description': 'Professional event and commercial photography that tells your story beautifully.',
@@ -65,6 +77,9 @@ const translations: Record<Language, Record<string, string>> = {
     'about.stat3.value': '100%', 'about.stat3.label': 'Tingkat Kepuasan',
     'services.subtitle': 'Layanan Kami', 'services.title': 'Yang Kami Kuasai',
     'services.description': 'Dari konsep hingga kreasi, kami memberikan solusi digital komprehensif sesuai kebutuhan Anda.',
+    'cta.book': 'Pesan Sekarang',
+    'howtoorder.title': 'Cara Order',
+    'faq.title': 'FAQ',
     'services.web.title': 'Pembuatan Website', 'services.web.description': 'Website custom dan responsif yang meningkatkan konversi dan kehadiran online Anda.',
     'services.video.title': 'Produksi Video Ads', 'services.video.description': 'Konten video menarik untuk Instagram, Reels, dan TikTok yang memikat perhatian.',
     'services.photo.title': 'Fotografi & Videografi', 'services.photo.description': 'Fotografi profesional untuk event dan komersial yang menceritakan kisah Anda dengan indah.',
@@ -97,16 +112,24 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [servicesRaw, setServicesRaw] = useState<any[]>([]);
   const [projectsRaw, setProjectsRaw] = useState<any[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [howToOrderRaw, setHowToOrderRaw] = useState<any[]>([]);
+  const [faqRaw, setFaqRaw] = useState<any[]>([]);
+  const [socialLinksRaw, setSocialLinksRaw] = useState<any[]>([]);
+  const [toolsRaw, setToolsRaw] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchContent() {
       try {
-        const [settingsRes, statsRes, servicesRes, projectsRes] = await Promise.all([
+        const [settingsRes, statsRes, servicesRes, projectsRes, howToOrderRes, faqRes, socialLinksRes, toolsRes] = await Promise.all([
           supabase.from('settings').select('*'),
           supabase.from('stats').select('*').order('order_index'),
           supabase.from('services').select('*').order('order_index'),
           supabase.from('projects').select('*').order('order_index'),
+          supabase.from('how_to_order_steps').select('*').order('order_index'),
+          supabase.from('faq').select('*').order('order_index'),
+          supabase.from('social_links').select('*').order('order_index'),
+          supabase.from('tools').select('*').order('order_index'),
         ]);
 
         if (settingsRes.data) {
@@ -132,6 +155,10 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
         if (statsRes.data) setStatsRaw(statsRes.data);
         if (servicesRes.data) setServicesRaw(servicesRes.data);
         if (projectsRes.data) setProjectsRaw(projectsRes.data);
+        if (howToOrderRes.data) setHowToOrderRaw(howToOrderRes.data);
+        if (faqRes.data) setFaqRaw(faqRes.data);
+        if (socialLinksRes.data) setSocialLinksRaw(socialLinksRes.data);
+        if (toolsRes?.data) setToolsRaw(toolsRes.data);
       } catch (e) {
         console.error('Failed to fetch content:', e);
       }
@@ -155,6 +182,22 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     if (key === 'hero.description' && settings[`hero_desc_${suffix}`]) return settings[`hero_desc_${suffix}`];
     if (key === 'hero.cta1' && settings[`hero_cta1_${suffix}`]) return settings[`hero_cta1_${suffix}`];
     if (key === 'hero.cta2' && settings[`hero_cta2_${suffix}`]) return settings[`hero_cta2_${suffix}`];
+
+    if (key === 'services.title' && settings[`services_title_${suffix}`]) return settings[`services_title_${suffix}`];
+    if (key === 'services.subtitle' && settings[`services_subtitle_${suffix}`]) return settings[`services_subtitle_${suffix}`];
+    if (key === 'services.description' && settings[`services_desc_${suffix}`]) return settings[`services_desc_${suffix}`];
+    if (key === 'cta.book' && settings[`cta_book_${suffix}`]) return settings[`cta_book_${suffix}`];
+
+    if (key === 'portfolio.title' && settings[`portfolio_title_${suffix}`]) return settings[`portfolio_title_${suffix}`];
+    if (key === 'portfolio.subtitle' && settings[`portfolio_subtitle_${suffix}`]) return settings[`portfolio_subtitle_${suffix}`];
+    if (key === 'portfolio.description' && settings[`portfolio_desc_${suffix}`]) return settings[`portfolio_desc_${suffix}`];
+
+    if (key === 'contact.title' && settings[`contact_title_${suffix}`]) return settings[`contact_title_${suffix}`];
+    if (key === 'contact.subtitle' && settings[`contact_subtitle_${suffix}`]) return settings[`contact_subtitle_${suffix}`];
+    if (key === 'contact.description' && settings[`contact_desc_${suffix}`]) return settings[`contact_desc_${suffix}`];
+
+    if (key === 'howtoorder.title' && settings[`howtoorder_title_${suffix}`]) return settings[`howtoorder_title_${suffix}`];
+    if (key === 'faq.title' && settings[`faq_title_${suffix}`]) return settings[`faq_title_${suffix}`];
 
     return translations[language][key] || key;
   };
@@ -180,9 +223,8 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
       description: suffix === 'id' ? p.description_id : p.description_en,
       category: p.category || 'Other',
       image: p.image_url || '',
-      link: p.project_url || undefined,
+      links: p.links || (p.project_url ? [{ label: 'Lihat Proyek', url: p.project_url }] : undefined),
       techStack: p.tech_stack || undefined,
-      projectUrl: p.project_url || undefined,
     }));
 
     const contact = {
@@ -191,8 +233,38 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
       instagram: settings.contact_instagram || 'vascode.creative',
     };
 
-    return { stats, services, projects, contact, categories };
-  }, [language, settings, statsRaw, servicesRaw, projectsRaw, categories]);
+    const howToOrderSteps = howToOrderRaw.map((s: any) => ({
+      step_number: s.step_number,
+      title_id: s.title_id,
+      title_en: s.title_en,
+      description_id: s.description_id || '',
+      description_en: s.description_en || '',
+      icon: s.icon,
+    }));
+
+    const faq = faqRaw.map((f: any) => ({
+      question_id: f.question_id,
+      question_en: f.question_en,
+      answer_id: f.answer_id,
+      answer_en: f.answer_en,
+    }));
+
+    const socialLinks = socialLinksRaw.filter((l: any) => l.is_active).map((l: any) => ({
+      platform: l.platform,
+      icon: l.icon,
+      url: l.url,
+      label_id: l.label_id,
+      label_en: l.label_en,
+    }));
+
+    const tools = toolsRaw.map((t: any) => ({
+      id: t.id,
+      name: t.name,
+      logo_url: t.logo_url,
+    }));
+
+    return { stats, services, projects, contact, categories, howToOrderSteps, faq, socialLinks, tools, settings };
+  }, [language, settings, statsRaw, servicesRaw, projectsRaw, categories, howToOrderRaw, faqRaw, socialLinksRaw, toolsRaw]);
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t, content, loading }}>

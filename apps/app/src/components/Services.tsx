@@ -98,7 +98,7 @@ const Services = () => {
                 whileHover={{ x: 5 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {t('services.book')}
+                {t('cta.book')}
                 <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
               </motion.button>
 

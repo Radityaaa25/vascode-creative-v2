@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from "react";
-import { Bell, Search, ChevronDown, Globe, LogOut } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Bell, Search, ChevronDown, Globe, LogOut, Layout, Users } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuGroup
@@ -10,16 +10,54 @@ import { logoutAction } from "@/app/login/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/providers/language-provider";
+import { getClients, type ClientCRM } from "@/app/actions/clients";
+
+const ROUTES = [
+  { label: "Dashboard", path: "/", keywords: ["dashboard", "home", "beranda", "stats", "statistik"], icon: Layout },
+  { label: "Clients Database", path: "/clients", keywords: ["client", "klien", "customer", "pelanggan", "database"], icon: Users },
+  { label: "Content CMS", path: "/content", keywords: ["content", "konten", "portfolio", "tools", "faq", "hero", "service", "layanan", "about", "tentang", "karya", "cms"], icon: Globe },
+  { label: "Settings", path: "/settings", keywords: ["setting", "pengaturan", "password", "profile", "akun", "account"], icon: Bell }
+];
 
 export function TopBar() {
   const { lang, setLang, t } = useLanguage();
   const [search, setSearch] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [clients, setClients] = useState<ClientCRM[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    getClients().then(res => {
+      if (res.success) setClients(res.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const q = search.trim().toLowerCase();
+  const suggestedRoutes = q ? ROUTES.filter(r => r.keywords.some(kw => kw.includes(q)) || r.label.toLowerCase().includes(q)) : [];
+  const suggestedClients = q ? clients.filter(c => (c.name + c.company + c.email).toLowerCase().includes(q)).slice(0, 5) : [];
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && search.trim()) {
-      toast.success(`${t.topbar.searchingFor} "${search}"...`, { description: t.topbar.searchNotice });
+      if (suggestedRoutes.length > 0) {
+        toast.success(`Navigating to ${suggestedRoutes[0].path}...`);
+        router.push(suggestedRoutes[0].path);
+      } else {
+        toast.success(`Searching clients for "${search}"...`);
+        router.push(`/clients?q=${encodeURIComponent(search.trim())}`);
+      }
       setSearch("");
+      setShowSuggestions(false);
     }
   };
 
@@ -35,15 +73,50 @@ export function TopBar() {
       <div className="hidden flex-1 md:block" />
 
       {/* Centered Search Bar */}
-      <div className="relative w-full max-w-xl shrink-0">
+      <div className="relative w-full max-w-xl shrink-0" ref={containerRef}>
         <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40 z-10" />
         <input
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setShowSuggestions(true);
+          }}
+          onFocus={() => setShowSuggestions(true)}
           onKeyDown={handleSearch}
           placeholder={t.topbar.searchPlaceholder}
           className="relative h-11 w-full rounded-full border border-white/10 bg-[hsl(240_3%_13%)]/60 backdrop-blur-xl pl-11 pr-4 text-sm text-foreground placeholder:text-white/40 shadow-lg transition-all focus:border-primary/50 focus:bg-[hsl(240_3%_13%)]/80 focus:outline-none focus:ring-2 focus:ring-primary/20"
         />
+        
+        {/* Suggestions Dropdown */}
+        {showSuggestions && search.trim() && (suggestedRoutes.length > 0 || suggestedClients.length > 0) && (
+          <div className="absolute left-0 top-[calc(100%+8px)] w-full rounded-2xl border border-white/10 bg-[hsl(240_3%_10%)]/95 backdrop-blur-xl shadow-2xl overflow-hidden flex flex-col py-2 z-50">
+            {suggestedRoutes.length > 0 && (
+              <div className="px-2 pb-2">
+                <div className="px-3 py-1 text-xs font-semibold text-white/40 uppercase tracking-wider">Pages</div>
+                {suggestedRoutes.map(r => (
+                  <button key={r.path} onClick={() => { router.push(r.path); setShowSuggestions(false); setSearch(""); }} className="w-full text-left flex items-center px-3 py-2 rounded-xl text-sm text-white/80 hover:bg-white/5 hover:text-white transition">
+                    <r.icon className="mr-3 h-4 w-4 text-white/40" />
+                    {r.label}
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            {suggestedRoutes.length > 0 && suggestedClients.length > 0 && <div className="h-[1px] w-full bg-white/10 my-1" />}
+            
+            {suggestedClients.length > 0 && (
+              <div className="px-2 pt-1">
+                <div className="px-3 py-1 text-xs font-semibold text-white/40 uppercase tracking-wider">Clients ({suggestedClients.length})</div>
+                {suggestedClients.map(c => (
+                  <button key={c.id} onClick={() => { router.push(`/clients?q=${encodeURIComponent(c.name)}`); setShowSuggestions(false); setSearch(""); }} className="w-full text-left flex flex-col px-3 py-2 rounded-xl text-sm hover:bg-white/5 transition">
+                    <span className="font-medium text-white/90">{c.name}</span>
+                    <span className="text-xs text-white/50">{c.company} • {c.email}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Right Side Buttons */}

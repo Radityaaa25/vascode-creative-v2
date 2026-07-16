@@ -61,14 +61,18 @@ export function AIAssistant() {
     }
   }, [setMessages]);
 
-  // Save chat history to localStorage whenever it changes
+  // Save chat history to localStorage with debounce (avoids jank during streaming)
+  const saveTimerRef = useRef<any>(undefined);
   useEffect(() => {
-    if (messages.length > 0) {
+    if (messages.length === 0) return;
+    clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         data: messages,
         timestamp: Date.now()
       }));
-    }
+    }, 500);
+    return () => clearTimeout(saveTimerRef.current);
   }, [messages]);
 
   const clearChat = () => setConfirmClear(true);

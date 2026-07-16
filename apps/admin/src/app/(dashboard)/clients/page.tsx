@@ -13,10 +13,11 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog, DialogClose, DialogContent,
+  DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { getClients, createClient, updateClient, deleteClient, type ClientCRM, type CreateClientInput } from "@/app/actions/clients";
 
@@ -32,9 +33,10 @@ const emptyForm: CreateClientInput = { name: "", company: "", email: "", phone_w
 const PAGE_SIZE = 10;
 
 export default function ClientsPage() {
+  const searchParams = useSearchParams();
   const [clients, setClients] = useState<ClientCRM[]>([]);
   const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(searchParams.get("q") || "");
   const [status, setStatus] = useState<"all" | Status>("all");
   const [sort, setSort] = useState<{ key: keyof ClientCRM; dir: "asc" | "desc" }>({ key: "joined_at", dir: "desc" });
   const [selected, setSelected] = useState<string[]>([]);
@@ -101,30 +103,35 @@ export default function ClientsPage() {
     setExporting(kind);
     const data = filtered.length > 0 ? filtered : clients;
 
-    if (kind === "pdf") {
-      const { default: jsPDF } = await import("jspdf");
-      const { default: autoTable } = await import("jspdf-autotable");
-      const doc = new jsPDF();
-      doc.text("Client List", 14, 15);
-      autoTable(doc, {
-        startY: 22,
-        head: [["Name", "Company", "Email", "Phone", "Status", "Projects", "Joined"]],
-        body: data.map((c) => [c.name, c.company, c.email, c.phone_wa, c.status, String(c.projects_count), c.joined_at]),
-        styles: { fontSize: 8 },
-      });
-      doc.save("clients.pdf");
-    } else {
-      const XLSX = await import("xlsx");
-      const ws = XLSX.utils.json_to_sheet(
-        data.map((c) => ({ Name: c.name, Company: c.company, Email: c.email, Phone: c.phone_wa, Status: c.status, Projects: c.projects_count, Joined: c.joined_at }))
-      );
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Clients");
-      XLSX.writeFile(wb, "clients.xlsx");
+    try {
+      if (kind === "pdf") {
+        const { default: jsPDF } = await import("jspdf");
+        const { default: autoTable } = await import("jspdf-autotable");
+        const doc = new jsPDF();
+        doc.text("Client List", 14, 15);
+        autoTable(doc, {
+          startY: 22,
+          head: [["Name", "Company", "Email", "Phone", "Status", "Projects", "Joined"]],
+          body: data.map((c) => [c.name, c.company, c.email, c.phone_wa, c.status, String(c.projects_count), c.joined_at]),
+          styles: { fontSize: 8 },
+        });
+        doc.save("clients.pdf");
+      } else {
+        const XLSX = await import("xlsx");
+        const ws = XLSX.utils.json_to_sheet(
+          data.map((c) => ({ Name: c.name, Company: c.company, Email: c.email, Phone: c.phone_wa, Status: c.status, Projects: c.projects_count, Joined: c.joined_at }))
+        );
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Clients");
+        XLSX.writeFile(wb, "clients.xlsx");
+      }
+      toast.success(`Exported ${data.length} clients to ${kind.toUpperCase()}`);
+    } catch (e) {
+      console.error('Export error:', e);
+      toast.error(`Export failed: ${e instanceof Error ? e.message : 'Unknown error'}`);
     }
 
     setExporting(null);
-    toast.success(`Exported ${data.length} clients to ${kind.toUpperCase()}`);
   }
 
   // Modal handlers
@@ -176,10 +183,16 @@ export default function ClientsPage() {
 
   async function executeBulkDelete() {
     setBulkDeleting(true);
-    await Promise.all(selected.map((id) => deleteClient(id)));
+    const results = await Promise.allSettled(selected.map((id) => deleteClient(id)));
+    const succeeded = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
+    const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.success)).length;
     setBulkDeleting(false);
     setBulkDelete(false);
-    toast.success(`Deleted ${selected.length} clients`);
+    if (failed > 0) {
+      toast.error(`Deleted ${succeeded} clients, ${failed} failed`);
+    } else {
+      toast.success(`Deleted ${succeeded} clients`);
+    }
     setSelected([]);
     fetchClients();
   }
@@ -456,14 +469,14 @@ export default function ClientsPage() {
       </AnimatePresence>
 
       {/* Add/Edit Modal */}
-      <AlertDialog open={modalOpen} onOpenChange={(o) => !o && setModalOpen(false)}>
-        <AlertDialogContent className="glass-strong border-white/10 sm:max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle>{editingId ? "Edit Client" : "Add Client"}</AlertDialogTitle>
-            <AlertDialogDescription className="text-white/70">
+      <Dialog open={modalOpen} onOpenChange={(o) => !o && setModalOpen(false)}>
+        <DialogContent className="glass-strong border-white/10 sm:max-w-md" showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>{editingId ? "Edit Client" : "Add Client"}</DialogTitle>
+            <DialogDescription className="text-white/70">
               {editingId ? "Update the client details below." : "Fill in the details to add a new client."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            </DialogDescription>
+          </DialogHeader>
           <div className="space-y-4">
             <div>
               <label className="mb-1 block text-xs font-medium text-white/60">Name *</label>
@@ -528,20 +541,20 @@ export default function ClientsPage() {
               </div>
             </div>
           </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-full border-white/10 bg-transparent hover:bg-white/5">
+          <DialogFooter>
+            <DialogClose className="rounded-full border border-white/10 bg-transparent px-4 py-2 text-sm font-medium hover:bg-white/5">
               Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
+            </DialogClose>
+            <button
               onClick={handleSave}
               disabled={saving}
-              className="rounded-full bg-primary text-primary-foreground hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:brightness-110 disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : editingId ? "Update" : "Create"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete confirmation */}
       <AnimatePresence>

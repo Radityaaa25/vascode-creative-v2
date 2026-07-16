@@ -3,7 +3,10 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Services from '@/components/Services';
+import HowToOrder from '@/components/HowToOrder';
 import Portfolio from '@/components/Portfolio';
+import FAQ from '@/components/FAQ';
+import ToolsWeUse from '@/components/ToolsWeUse';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
@@ -21,6 +24,9 @@ function IndexInner() {
         <About />
         <Services />
         <Portfolio />
+        <HowToOrder />
+        <FAQ />
+        <ToolsWeUse />
         <Contact />
         <Footer />
       </main>
