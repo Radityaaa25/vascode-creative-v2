@@ -1,16 +1,32 @@
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useMobileDevice } from '@/hooks/use-mobile';
+import { getViewportConfig } from '@/lib/animations';
 import logoIcon from '@/assets/logo-icon.png';
 import { AnimatedStatValue } from './AnimatedStatValue';
 
-const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }
-const slideLeft = { hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } } }
-const slideRight = { hidden: { opacity: 0, x: 50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } } }
-const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }
-const statScale = { hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }
-
 const About = () => {
   const { t, content } = useLanguage();
+  const isMobile = useMobileDevice();
+  const viewportConfig = getViewportConfig();
+
+  const slideLeft = {
+    hidden: { opacity: 0, x: isMobile ? -20 : -50 },
+    visible: { opacity: 1, x: 0, transition: { duration: isMobile ? 0.35 : 0.8, ease: isMobile ? [0.22, 1, 0.36, 1] : [0.22, 1, 0.36, 1] } },
+  }
+  const slideRight = {
+    hidden: { opacity: 0, x: isMobile ? 20 : 50 },
+    visible: { opacity: 1, x: 0, transition: { duration: isMobile ? 0.35 : 0.8, ease: isMobile ? [0.22, 1, 0.36, 1] : [0.22, 1, 0.36, 1] } },
+  }
+  const fadeUp = {
+    hidden: { opacity: 0, y: isMobile ? 10 : 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: isMobile ? 0.35 : 0.6, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' } },
+  }
+  const statScale = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: { opacity: 1, scale: 1, transition: { duration: isMobile ? 0.35 : 0.5, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' } },
+  }
+  const container = { hidden: {}, visible: { transition: { staggerChildren: isMobile ? 0.05 : 0.08 } } }
 
   const stats = content.stats.length > 0 ? content.stats : [
     { value: t('about.stat1.value'), label: t('about.stat1.label') },
@@ -26,7 +42,7 @@ const About = () => {
           variants={container}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ once: true, margin: viewportConfig.margin }}
         >
           {/* Content */}
           <motion.div variants={slideLeft}>
@@ -72,7 +88,7 @@ const About = () => {
           </motion.div>
         </motion.div>
       </div>
-      <style>{`
+      {!isMobile && <style>{`
         .about-r1 { animation: ar1 20s ease-in-out infinite; }
         .about-r2 { animation: ar2 15s ease-in-out infinite; }
         .about-r3 { animation: ar3 10s ease-in-out infinite; }
@@ -87,7 +103,7 @@ const About = () => {
         @keyframes af1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
         @keyframes af2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
         @keyframes af3 { 0%,100%{transform:translateX(0)} 50%{transform:translateX(5px)} }
-      `}</style>
+      `}</style>}
     </section>
   );
 };

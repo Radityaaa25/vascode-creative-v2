@@ -1,6 +1,8 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useRef } from 'react';
+import { useInView } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useMobileDevice } from '@/hooks/use-mobile';
 import { InfiniteSlider } from '@/components/ui/infinite-slider';
 import { ProgressiveBlur } from '@/components/ui/progressive-blur';
 
@@ -19,6 +21,9 @@ const DEFAULT_TOOLS = [
 const ToolsWeUse = () => {
   const { language, content } = useLanguage();
   const { theme } = useTheme();
+  const isMobile = useMobileDevice();
+  const ref = useRef(null);
+  const isInView = useInView(ref, { margin: '200px' });
   const isID = language === 'id';
 
   const tools = content.tools && content.tools.length > 0 ? content.tools : DEFAULT_TOOLS;
@@ -46,7 +51,7 @@ const ToolsWeUse = () => {
   };
 
   return (
-    <section id="tools" className="relative w-full overflow-hidden py-24 md:py-32">
+    <section id="tools" className="relative w-full overflow-hidden py-24 md:py-32" ref={ref}>
       <div className="mx-auto w-full max-w-4xl relative z-10">
         <div className="text-center">
           <span className="mb-4 inline-block rounded-full bg-[#8350e8]/10 px-4 py-1.5 font-medium text-xs text-[#8350e8] tracking-widest">
@@ -58,8 +63,9 @@ const ToolsWeUse = () => {
         <div className="relative mx-auto mt-14 h-[100px] w-full max-w-3xl">
           <InfiniteSlider 
             className="flex h-full w-full items-center" 
-            duration={25}
+            duration={isMobile ? 45 : 25}
             gap={64}
+            paused={!isInView}
           >
             {tools.map((tool) => (
               <div 
@@ -85,16 +91,32 @@ const ToolsWeUse = () => {
             ))}
           </InfiniteSlider>
           
-          <ProgressiveBlur
-            className="pointer-events-none absolute top-0 left-0 h-full w-[120px] md:w-[200px]"
-            direction="left"
-            blurIntensity={1.5}
-          />
-          <ProgressiveBlur
-            className="pointer-events-none absolute top-0 right-0 h-full w-[120px] md:w-[200px]"
-            direction="right"
-            blurIntensity={1.5}
-          />
+          {isMobile ? (
+            <div className="pointer-events-none absolute top-0 left-0 h-full w-[60px] md:w-[100px]"
+              style={{
+                background: 'linear-gradient(to right, hsl(var(--background)), transparent)',
+              }}
+            />
+          ) : (
+            <ProgressiveBlur
+              className="pointer-events-none absolute top-0 left-0 h-full w-[120px] md:w-[200px]"
+              direction="left"
+              blurIntensity={1.5}
+            />
+          )}
+          {isMobile ? (
+            <div className="pointer-events-none absolute top-0 right-0 h-full w-[60px] md:w-[100px]"
+              style={{
+                background: 'linear-gradient(to left, hsl(var(--background)), transparent)',
+              }}
+            />
+          ) : (
+            <ProgressiveBlur
+              className="pointer-events-none absolute top-0 right-0 h-full w-[120px] md:w-[200px]"
+              direction="right"
+              blurIntensity={1.5}
+            />
+          )}
         </div>
       </div>
 
