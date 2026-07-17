@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm install --frozen-lockfile && pnpm --filter app build"
+  command = "pnpm install --frozen-lockfile && pnpm --filter vite_react_shadcn_ts build"
   publish = "apps/app/dist"
 
 [[redirects]]
