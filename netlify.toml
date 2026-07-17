@@ -1,6 +1,8 @@
 [build]
   command = "pnpm install --frozen-lockfile && pnpm --filter vite_react_shadcn_ts build"
   publish = "apps/app/dist"
+  [build.environment]
+    VITE_BASE = "/"
 
 [[redirects]]
   from = "/*"

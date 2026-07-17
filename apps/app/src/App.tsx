@@ -18,7 +18,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter basename={import.meta.env.PROD ? "/vascode-creative-showcase/" : "/"}>
+        <BrowserRouter basename={import.meta.env.VITE_BASE || "/"}>
           <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-void"><div className="h-8 w-8 animate-spin rounded-full border-2 border-volt border-t-transparent" /></div>}>
             <Routes>
               <Route path="/" element={<Index />} />
