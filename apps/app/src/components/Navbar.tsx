@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,13 +11,27 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const scrollTimeout = useRef<number>();
 
   useEffect(() => {
+    // Throttled scroll handler for better performance
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (scrollTimeout.current) return;
+      
+      scrollTimeout.current = window.setTimeout(() => {
+        setIsScrolled(window.scrollY > 50);
+        scrollTimeout.current = undefined;
+      }, 100);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    // Initial check
+    handleScroll();
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+    };
   }, []);
 
   const navItems = [

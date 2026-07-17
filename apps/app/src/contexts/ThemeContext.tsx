@@ -29,7 +29,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       document.documentElement.classList.toggle('light', target === 'light');
     };
 
-    if (document.startViewTransition) {
+    // Disable View Transition API on mobile for better performance
+    const isMobile = window.innerWidth < 768 || 'ontouchstart' in window;
+    if (document.startViewTransition && !isMobile) {
       document.startViewTransition(apply);
     } else {
       apply();

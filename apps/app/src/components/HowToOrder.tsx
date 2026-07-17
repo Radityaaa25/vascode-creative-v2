@@ -55,32 +55,47 @@ const HowToOrder = () => {
   const [isMobile, setIsMobile] = useState(false);
   const pathRef = useRef<SVGPathElement>(null);
   const [pathLen, setPathLen] = useState(0);
+  const measureTimeoutRef = useRef<number>();
+  const rafRef = useRef<number>();
 
   const measures = useCallback(() => {
-    const container = stepsContainerRef.current;
-    if (!container) return;
-    const cr = container.getBoundingClientRect();
-    const circles = container.querySelectorAll<HTMLElement>('[data-step-circle]');
-    const pts: { x: number; y: number }[] = [];
-    circles.forEach((el) => {
-      const r = el.getBoundingClientRect();
-      pts.push({ x: r.left + r.width / 2 - cr.left, y: r.top + r.height / 2 - cr.top });
+    // Cancel any pending RAF
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    
+    rafRef.current = requestAnimationFrame(() => {
+      const container = stepsContainerRef.current;
+      if (!container) return;
+      const cr = container.getBoundingClientRect();
+      const circles = container.querySelectorAll<HTMLElement>('[data-step-circle]');
+      const pts: { x: number; y: number }[] = [];
+      circles.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        pts.push({ x: r.left + r.width / 2 - cr.left, y: r.top + r.height / 2 - cr.top });
+      });
+      if (pts.length > 1) setPoints(pts);
+      setSize({ w: Math.round(cr.width), h: Math.round(cr.height) });
+      setIsMobile(window.innerWidth < 768);
     });
-    if (pts.length > 1) setPoints(pts);
-    setSize({ w: Math.round(cr.width), h: Math.round(cr.height) });
-    setIsMobile(window.innerWidth < 768);
   }, []);
+
+  // Debounced resize handler
+  const debouncedMeasures = useCallback(() => {
+    if (measureTimeoutRef.current) clearTimeout(measureTimeoutRef.current);
+    measureTimeoutRef.current = window.setTimeout(measures, 150);
+  }, [measures]);
 
   useEffect(() => {
     measures();
-    window.addEventListener('resize', measures);
-    const ro = new ResizeObserver(measures);
+    window.addEventListener('resize', debouncedMeasures);
+    const ro = new ResizeObserver(debouncedMeasures);
     if (stepsContainerRef.current) ro.observe(stepsContainerRef.current);
     return () => {
-      window.removeEventListener('resize', measures);
+      window.removeEventListener('resize', debouncedMeasures);
       ro.disconnect();
+      if (measureTimeoutRef.current) clearTimeout(measureTimeoutRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [measures]);
+  }, [measures, debouncedMeasures]);
 
   const windingPath = useMemo(() => generateWindingPath(points, isMobile), [points, isMobile]);
 
@@ -134,6 +149,7 @@ const HowToOrder = () => {
             className="absolute inset-0 w-full h-full pointer-events-none z-0"
             preserveAspectRatio="none"
             viewBox={`0 0 ${size.w} ${size.h}`}
+            style={{ willChange: 'auto' }}
           >
             {/* Background inactive line */}
             <path 
@@ -144,16 +160,18 @@ const HowToOrder = () => {
               strokeLinecap="round" 
               strokeLinejoin="round" 
             />
-            {/* Glow effect */}
-            <motion.path
-              d={windingPath}
-              stroke="hsl(77 100% 50%)"
-              strokeWidth={14}
-              fill="none"
-              strokeLinecap="round"
-              strokeDasharray={pathLen}
-              style={{ strokeDashoffset: dashOffset, opacity: 0.15 }}
-            />
+            {/* Glow effect - disabled on mobile for better performance */}
+            {!isMobile && (
+              <motion.path
+                d={windingPath}
+                stroke="hsl(77 100% 50%)"
+                strokeWidth={14}
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray={pathLen}
+                style={{ strokeDashoffset: dashOffset, opacity: 0.15, willChange: 'auto' }}
+              />
+            )}
             {/* Active animated line */}
             <motion.path
               ref={pathRef}
@@ -164,7 +182,7 @@ const HowToOrder = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeDasharray={pathLen}
-              style={{ strokeDashoffset: dashOffset }}
+              style={{ strokeDashoffset: dashOffset, willChange: 'auto' }}
             />
           </svg>
         )}
@@ -182,11 +200,12 @@ const HowToOrder = () => {
               >
                 {/* Content */}
                 <motion.div 
-                  initial={{ opacity: 0, x: isEven ? -20 : 20, y: 10 }}
-                  whileInView={{ opacity: 1, x: 0, y: 0 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
                   className={`md:w-5/12 ${isEven ? 'md:text-right' : 'md:text-left'}`}
+                  style={{ willChange: 'transform, opacity' }}
                 >
                   <div className="mb-2 flex items-center gap-3 md:hidden">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-volt text-sm font-bold text-void">
@@ -207,11 +226,12 @@ const HowToOrder = () => {
                 {/* Circle Icon */}
                 <motion.div 
                   data-step-circle
-                  initial={{ scale: 0, opacity: 0 }}
+                  initial={{ scale: 0.8, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}
                   viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.45, type: 'spring' }}
-                  className="absolute left-6 md:left-1/2 z-10 flex h-12 w-12 md:h-16 md:w-16 -translate-x-1/2 items-center justify-center rounded-full border-4 border-void bg-snow/5 text-volt shadow-lg shadow-volt/10 transition-transform hover:scale-110 backdrop-blur-md"
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="absolute left-6 md:left-1/2 z-10 flex h-12 w-12 md:h-16 md:w-16 -translate-x-1/2 items-center justify-center rounded-full border-4 border-void bg-snow/5 text-volt shadow-lg shadow-volt/10 backdrop-blur-md"
+                  style={{ willChange: 'transform, opacity' }}
                 >
                   <IconComp size={24} className="md:w-7 md:h-7" />
                 </motion.div>

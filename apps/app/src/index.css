@@ -256,3 +256,86 @@
   from { clip-path: circle(150% at 50% 50%); }
   to { clip-path: circle(0% at 50% 50%); }
 }
+
+
+/* ===================================
+   Mobile Performance Optimizations
+   =================================== */
+
+/* Hardware acceleration for common animated elements */
+@layer utilities {
+  .gpu-accelerated {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+  }
+
+  /* Optimize touch scrolling on iOS */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Prefer reduced motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Optimize backdrop-blur for mobile Safari */
+@supports (-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px)) {
+  .glass,
+  .glass-dark {
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+/* Force GPU compositing for animated sections */
+#home,
+#services,
+#portfolio,
+#how-to-order,
+nav {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Optimize font rendering on mobile */
+@media (max-width: 768px) {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
+  }
+}
+
+/* Reduce blur effects on mobile for better performance */
+@media (max-width: 768px) {
+  .backdrop-blur-xl {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  
+  .backdrop-blur-3xl {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Disable heavy glow/blur background effects on mobile */
+  .blur-\[150px\],
+  .blur-\[120px\],
+  .blur-\[100px\] {
+    opacity: 0.3;
+    filter: blur(50px);
+  }
+}
