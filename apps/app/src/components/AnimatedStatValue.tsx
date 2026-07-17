@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'framer-motion'
 
-export function AnimatedStatValue({ value: raw }: { value: string }) {
+export function AnimatedStatValue({ value: raw, delay = 0 }: { value: string; delay?: number }) {
   const ref = useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true })
   const [display, setDisplay] = useState('0')
@@ -12,18 +12,23 @@ export function AnimatedStatValue({ value: raw }: { value: string }) {
 
   useEffect(() => {
     if (num === null || !inView) return
-    const duration = 1400
-    const start = performance.now()
-    let raf = 0
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration)
-      const eased = 1 - Math.pow(1 - t, 3)
-      setDisplay(Math.round(eased * num).toLocaleString())
-      if (t < 1) raf = requestAnimationFrame(tick)
+    let rafId = 0
+    const timeout = setTimeout(() => {
+      const duration = 1400
+      const start = performance.now()
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / duration)
+        const eased = 1 - Math.pow(1 - t, 3)
+        setDisplay(Math.round(eased * num).toLocaleString())
+        if (t < 1) rafId = requestAnimationFrame(tick)
+      }
+      rafId = requestAnimationFrame(tick)
+    }, delay)
+    return () => {
+      clearTimeout(timeout)
+      cancelAnimationFrame(rafId)
     }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [num, inView])
+  }, [num, inView, delay])
 
   if (num === null) return <>{raw}</>
 

@@ -1,6 +1,5 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 
 export function InfiniteSlider({
@@ -16,22 +15,21 @@ export function InfiniteSlider({
 }) {
   return (
     <div className={cn("overflow-hidden flex flex-nowrap", className)}>
-      <motion.div
-        className="flex shrink-0 items-center"
-        style={{ gap, paddingRight: gap }}
-        animate={{ x: ["0%", "-100%"] }}
-        transition={{ ease: "linear", duration, repeat: Infinity }}
+      <div
+        className="flex items-center"
+        style={{
+          gap,
+          animation: `iscroll ${duration}s linear infinite`,
+        }}
       >
-        {children}
-      </motion.div>
-      <motion.div
-        className="flex shrink-0 items-center"
-        style={{ gap, paddingRight: gap }}
-        animate={{ x: ["0%", "-100%"] }}
-        transition={{ ease: "linear", duration, repeat: Infinity }}
-      >
-        {children}
-      </motion.div>
+        <div className="flex shrink-0 items-center" style={{ gap }}>
+          {children}
+        </div>
+        <div className="flex shrink-0 items-center" style={{ gap }}>
+          {children}
+        </div>
+      </div>
+      <style>{`@keyframes iscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}`}</style>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMobileDevice } from '@/hooks/use-mobile';
 import { getViewportConfig } from '@/lib/animations';
@@ -8,25 +9,27 @@ import { AnimatedStatValue } from './AnimatedStatValue';
 const About = () => {
   const { t, content } = useLanguage();
   const isMobile = useMobileDevice();
+  const ref = useRef(null);
   const viewportConfig = getViewportConfig();
+  const isInView = useInView(ref, { once: true, margin: viewportConfig.margin });
 
   const slideLeft = {
-    hidden: { opacity: 0, x: isMobile ? -20 : -50 },
-    visible: { opacity: 1, x: 0, transition: { duration: isMobile ? 0.35 : 0.8, ease: isMobile ? [0.22, 1, 0.36, 1] : [0.22, 1, 0.36, 1] } },
+    hidden: { opacity: 0, x: -50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
   }
   const slideRight = {
-    hidden: { opacity: 0, x: isMobile ? 20 : 50 },
-    visible: { opacity: 1, x: 0, transition: { duration: isMobile ? 0.35 : 0.8, ease: isMobile ? [0.22, 1, 0.36, 1] : [0.22, 1, 0.36, 1] } },
+    hidden: { opacity: 0, x: 50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
   }
   const fadeUp = {
-    hidden: { opacity: 0, y: isMobile ? 10 : 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: isMobile ? 0.35 : 0.6, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' } },
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
   }
   const statScale = {
     hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1, transition: { duration: isMobile ? 0.35 : 0.5, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' } },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } },
   }
-  const container = { hidden: {}, visible: { transition: { staggerChildren: isMobile ? 0.05 : 0.08 } } }
+  const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }
 
   const stats = content.stats.length > 0 ? content.stats : [
     { value: t('about.stat1.value'), label: t('about.stat1.label') },
@@ -35,46 +38,79 @@ const About = () => {
   ];
 
   return (
-    <section id="about" className="section-padding">
+    <section id="about" className="section-padding" ref={ref}>
       <div className="container-custom">
-        <motion.div
-          className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center"
-          variants={container}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: viewportConfig.margin }}
-        >
-          {/* Content */}
-          <motion.div variants={slideLeft}>
-            <motion.span variants={fadeUp} className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary font-medium text-sm mb-4">
-              {t('about.subtitle')}
-            </motion.span>
-            <motion.h2 variants={fadeUp} className="text-3xl md:text-4xl lg:text-5xl font-bold text-snow mb-6 leading-tight">
-              {t('about.title')}
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-snow/70 text-lg leading-relaxed mb-8">
-              {t('about.description')}
-            </motion.p>
-            <motion.div variants={fadeUp} className="grid grid-cols-3 gap-4">
-              {stats.map((stat) => (
-                <motion.div key={stat.value} variants={statScale} className="text-center p-4 rounded-2xl bg-snow/5 border border-snow/10">
-                  <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-1"><AnimatedStatValue value={stat.value} /></div>
-                  <div className="text-sm text-snow/60">{stat.label}</div>
-                </motion.div>
-              ))}
+        {isMobile ? (
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary font-medium text-sm mb-4">
+                {t('about.subtitle')}
+              </span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-snow mb-6 leading-tight">
+                {t('about.title')}
+              </h2>
+              <p className="text-snow/70 text-lg leading-relaxed mb-8">
+                {t('about.description')}
+              </p>
+              <div className="grid grid-cols-3 gap-4">
+                {stats.map((stat) => (
+                  <div key={stat.value} className="text-center p-4 rounded-2xl bg-snow/5 border border-snow/10">
+                    <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-1">
+                      <AnimatedStatValue value={stat.value} delay={400} />
+                    </div>
+                    <div className="text-sm text-snow/60">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
             </motion.div>
-          </motion.div>
 
-          {/* Visual Element */}
-          <motion.div variants={slideRight} className="relative">
-            {isMobile ? (
+            <motion.div
+              initial={{ opacity: 0, x: 15 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="relative"
+            >
               <div className="relative aspect-square max-w-md mx-auto">
                 <div className="absolute inset-0 rounded-3xl bg-primary/10" />
                 <div className="absolute inset-4 rounded-3xl bg-primary flex items-center justify-center">
                   <img src={logoIcon} alt="Vascode Logo" className="w-2/3 h-2/3 object-contain" loading="lazy" width={400} height={400} />
                 </div>
               </div>
-            ) : (
+            </motion.div>
+          </div>
+        ) : (
+          <motion.div
+            className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center"
+            variants={container}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+          >
+            <motion.div variants={slideLeft}>
+              <motion.span variants={fadeUp} className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary font-medium text-sm mb-4">
+                {t('about.subtitle')}
+              </motion.span>
+              <motion.h2 variants={fadeUp} className="text-3xl md:text-4xl lg:text-5xl font-bold text-snow mb-6 leading-tight">
+                {t('about.title')}
+              </motion.h2>
+              <motion.p variants={fadeUp} className="text-snow/70 text-lg leading-relaxed mb-8">
+                {t('about.description')}
+              </motion.p>
+              <motion.div variants={fadeUp} className="grid grid-cols-3 gap-4">
+                {stats.map((stat) => (
+                  <motion.div key={stat.value} variants={statScale} className="text-center p-4 rounded-2xl bg-snow/5 border border-snow/10">
+                    <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-1"><AnimatedStatValue value={stat.value} /></div>
+                    <div className="text-sm text-snow/60">{stat.label}</div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            <motion.div variants={slideRight} className="relative">
               <div className="relative aspect-square max-w-md mx-auto">
                 <div className="about-r1 absolute inset-0 rounded-3xl bg-gradient-to-br from-primary/20 to-secondary/20" />
                 <div className="about-r2 absolute inset-4 rounded-3xl bg-gradient-to-br from-primary to-primary/80" />
@@ -93,9 +129,9 @@ const About = () => {
                   <span className="text-xl">📸</span>
                 </div>
               </div>
-            )}
+            </motion.div>
           </motion.div>
-        </motion.div>
+        )}
       </div>
       {!isMobile && <style>{`
         .about-r1 { animation: ar1 20s ease-in-out infinite; }

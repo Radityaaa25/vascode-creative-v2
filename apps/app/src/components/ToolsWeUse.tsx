@@ -66,12 +66,15 @@ const ToolsWeUse = () => {
             {tools.map((tool) => (
               <div 
                 key={tool.id} 
-                className="flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110"
+                className="flex items-center justify-center w-20 h-14 shrink-0 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110"
               >
                 <img 
                   src={tool.logo_url} 
                   alt={tool.name} 
-                  className="h-12 object-contain"
+                  className="max-h-full max-w-full object-contain"
+                  loading="lazy"
+                  width={80}
+                  height={56}
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                     const parent = (e.target as HTMLImageElement).parentElement;
