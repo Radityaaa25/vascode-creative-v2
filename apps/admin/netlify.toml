@@ -1,7 +1,6 @@
 [build]
-  base = "apps/admin"
-  command = "pnpm install --frozen-lockfile && pnpm run build"
-  publish = ".next"
+  command = "cd ../.. && pnpm install --frozen-lockfile && cd apps/admin && pnpm run build"
+  publish = "apps/admin/.next"
 
 # Security headers
 [[headers]]
