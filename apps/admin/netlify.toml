@@ -1,5 +1,6 @@
 [build]
   command = "pnpm install --frozen-lockfile && pnpm --filter admin build"
+  publish = "."
 
 # Security headers
 [[headers]]
