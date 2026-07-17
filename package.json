@@ -11,6 +11,8 @@
     "lint": "turbo run lint"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "playwright": "^1.61.1",
     "turbo": "latest"
   }
 }

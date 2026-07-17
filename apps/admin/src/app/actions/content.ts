@@ -1,14 +1,7 @@
 'use server'
 
 import { supabaseAdmin } from "@/lib/supabase-server"
-import { cookies } from "next/headers"
-
-async function verifyAdmin() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('admin_token')
-  if (!token) throw new Error("Unauthorized")
-  return true
-}
+import { verifyAdmin, sanitizeError } from "@/lib/auth"
 
 export type SettingRow = { key: string; value: string; description: string | null }
 
@@ -19,8 +12,7 @@ export async function getSettings(): Promise<{ success: true; data: SettingRow[]
     if (error) throw error
     return { success: true, data: data as SettingRow[] }
   } catch (e: any) {
-    console.error("getSettings error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getSettings") }
   }
 }
 
@@ -31,8 +23,7 @@ export async function updateSetting(key: string, value: string): Promise<{ succe
     if (error) throw error
     return { success: true }
   } catch (e: any) {
-    console.error("updateSetting error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "updateSetting") }
   }
 }
 
@@ -59,8 +50,7 @@ export async function getStats(): Promise<{ success: true; data: StatRow[] } | {
     if (error) throw error
     return { success: true, data: data as StatRow[] }
   } catch (e: any) {
-    console.error("getStats error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getStats") }
   }
 }
 
@@ -71,8 +61,7 @@ export async function createStat(input: StatInput): Promise<{ success: true; dat
     if (error) throw error
     return { success: true, data: data as StatRow }
   } catch (e: any) {
-    console.error("createStat error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "createStat") }
   }
 }
 
@@ -83,8 +72,7 @@ export async function updateStat(id: string, input: Partial<StatInput>): Promise
     if (error) throw error
     return { success: true, data: data as StatRow }
   } catch (e: any) {
-    console.error("updateStat error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "updateStat") }
   }
 }
 
@@ -95,8 +83,7 @@ export async function deleteStat(id: string): Promise<{ success: true } | { succ
     if (error) throw error
     return { success: true }
   } catch (e: any) {
-    console.error("deleteStat error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "deleteStat") }
   }
 }
 
@@ -131,8 +118,7 @@ export async function getServices(): Promise<{ success: true; data: ServiceRow[]
     if (error) throw error
     return { success: true, data: data as ServiceRow[] }
   } catch (e: any) {
-    console.error("getServices error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getServices") }
   }
 }
 
@@ -143,8 +129,7 @@ export async function createService(input: ServiceInput): Promise<{ success: tru
     if (error) throw error
     return { success: true, data: data as ServiceRow }
   } catch (e: any) {
-    console.error("createService error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "createService") }
   }
 }
 
@@ -155,8 +140,7 @@ export async function updateService(id: string, input: Partial<ServiceInput>): P
     if (error) throw error
     return { success: true, data: data as ServiceRow }
   } catch (e: any) {
-    console.error("updateService error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "updateService") }
   }
 }
 
@@ -167,8 +151,7 @@ export async function deleteService(id: string): Promise<{ success: true } | { s
     if (error) throw error
     return { success: true }
   } catch (e: any) {
-    console.error("deleteService error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "deleteService") }
   }
 }
 
@@ -207,8 +190,7 @@ export async function getProjects(): Promise<{ success: true; data: ProjectRow[]
     if (error) throw error
     return { success: true, data: data as ProjectRow[] }
   } catch (e: any) {
-    console.error("getProjects error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getProjects") }
   }
 }
 
@@ -219,8 +201,7 @@ export async function createProject(input: ProjectInput): Promise<{ success: tru
     if (error) throw error
     return { success: true, data: data as ProjectRow }
   } catch (e: any) {
-    console.error("createProject error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "createProject") }
   }
 }
 
@@ -231,8 +212,7 @@ export async function updateProject(id: string, input: Partial<ProjectInput>): P
     if (error) throw error
     return { success: true, data: data as ProjectRow }
   } catch (e: any) {
-    console.error("updateProject error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "updateProject") }
   }
 }
 
@@ -243,8 +223,7 @@ export async function deleteProject(id: string): Promise<{ success: true } | { s
     if (error) throw error
     return { success: true }
   } catch (e: any) {
-    console.error("deleteProject error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "deleteProject") }
   }
 }
 
@@ -259,8 +238,7 @@ export async function updateSettings(
     }
     return { success: true }
   } catch (e: any) {
-    console.error("updateSettings error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "updateSettings") }
   }
 }
 
@@ -291,8 +269,7 @@ export async function getFAQ(): Promise<{ success: true; data: FaqRow[] } | { su
     if (error) throw error
     return { success: true, data: data as FaqRow[] }
   } catch (e: any) {
-    console.error("getFAQ error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getFAQ") }
   }
 }
 
@@ -303,8 +280,7 @@ export async function createFAQ(input: FaqInput): Promise<{ success: true; data:
     if (error) throw error
     return { success: true, data: data as FaqRow }
   } catch (e: any) {
-    console.error("createFAQ error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "createFAQ") }
   }
 }
 
@@ -315,8 +291,7 @@ export async function updateFAQ(id: string, input: Partial<FaqInput>): Promise<{
     if (error) throw error
     return { success: true, data: data as FaqRow }
   } catch (e: any) {
-    console.error("updateFAQ error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "updateFAQ") }
   }
 }
 
@@ -327,8 +302,7 @@ export async function deleteFAQ(id: string): Promise<{ success: true } | { succe
     if (error) throw error
     return { success: true }
   } catch (e: any) {
-    console.error("deleteFAQ error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "deleteFAQ") }
   }
 }
 
@@ -363,8 +337,7 @@ export async function getHowToOrderSteps(): Promise<{ success: true; data: HowTo
     if (error) throw error
     return { success: true, data: data as HowToOrderRow[] }
   } catch (e: any) {
-    console.error("getHowToOrderSteps error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getHowToOrderSteps") }
   }
 }
 
@@ -375,8 +348,7 @@ export async function createHowToOrderStep(input: HowToOrderInput): Promise<{ su
     if (error) throw error
     return { success: true, data: data as HowToOrderRow }
   } catch (e: any) {
-    console.error("createHowToOrderStep error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "createHowToOrderStep") }
   }
 }
 
@@ -387,8 +359,7 @@ export async function updateHowToOrderStep(id: string, input: Partial<HowToOrder
     if (error) throw error
     return { success: true, data: data as HowToOrderRow }
   } catch (e: any) {
-    console.error("updateHowToOrderStep error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "updateHowToOrderStep") }
   }
 }
 
@@ -399,8 +370,7 @@ export async function deleteHowToOrderStep(id: string): Promise<{ success: true 
     if (error) throw error
     return { success: true }
   } catch (e: any) {
-    console.error("deleteHowToOrderStep error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "deleteHowToOrderStep") }
   }
 }
 
@@ -435,8 +405,7 @@ export async function getSocialLinks(): Promise<{ success: true; data: SocialLin
     if (error) throw error
     return { success: true, data: data as SocialLinkRow[] }
   } catch (e: any) {
-    console.error("getSocialLinks error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getSocialLinks") }
   }
 }
 
@@ -447,8 +416,7 @@ export async function createSocialLink(input: SocialLinkInput): Promise<{ succes
     if (error) throw error
     return { success: true, data: data as SocialLinkRow }
   } catch (e: any) {
-    console.error("createSocialLink error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "createSocialLink") }
   }
 }
 
@@ -459,8 +427,7 @@ export async function updateSocialLink(id: string, input: Partial<SocialLinkInpu
     if (error) throw error
     return { success: true, data: data as SocialLinkRow }
   } catch (e: any) {
-    console.error("updateSocialLink error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "updateSocialLink") }
   }
 }
 
@@ -471,8 +438,7 @@ export async function deleteSocialLink(id: string): Promise<{ success: true } | 
     if (error) throw error
     return { success: true }
   } catch (e: any) {
-    console.error("deleteSocialLink error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "deleteSocialLink") }
   }
 }
 
@@ -499,8 +465,7 @@ export async function getTools(): Promise<{ success: true; data: ToolRow[] } | {
     if (error) throw error
     return { success: true, data: data as ToolRow[] }
   } catch (e: any) {
-    console.error("getTools error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getTools") }
   }
 }
 
@@ -511,8 +476,7 @@ export async function createTool(input: ToolInput): Promise<{ success: true; dat
     if (error) throw error
     return { success: true, data: data as ToolRow }
   } catch (e: any) {
-    console.error("createTool error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "createTool") }
   }
 }
 
@@ -523,8 +487,7 @@ export async function updateTool(id: string, input: Partial<ToolInput>): Promise
     if (error) throw error
     return { success: true, data: data as ToolRow }
   } catch (e: any) {
-    console.error("updateTool error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "updateTool") }
   }
 }
 
@@ -535,8 +498,7 @@ export async function deleteTool(id: string): Promise<{ success: true } | { succ
     if (error) throw error
     return { success: true }
   } catch (e: any) {
-    console.error("deleteTool error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "deleteTool") }
   }
 }
 
@@ -571,8 +533,7 @@ export async function getAdminLogs(limit = 50): Promise<{ success: true; data: A
     if (error) throw error
     return { success: true, data: data as AdminLogRow[] }
   } catch (e: any) {
-    console.error("getAdminLogs error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getAdminLogs") }
   }
 }
 
@@ -588,8 +549,7 @@ export async function getTableStats(): Promise<{ success: true; data: { table: s
     )
     return { success: true, data: results }
   } catch (e: any) {
-    console.error("getTableStats error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "getTableStats") }
   }
 }
 
@@ -600,7 +560,6 @@ export async function clearAdminLogs(): Promise<{ success: true } | { success: f
     if (error) throw error
     return { success: true }
   } catch (e: any) {
-    console.error("clearAdminLogs error:", e)
-    return { success: false, error: e.message }
+    return { success: false, error: await sanitizeError(e, "clearAdminLogs") }
   }
 }

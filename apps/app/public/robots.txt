@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://vascodecreative.com/sitemap.xml
+
+Sitemap: https://vascode.my.id/sitemap.xml

@@ -1,7 +1,7 @@
 'use server'
 
 import { supabaseAdmin } from "@/lib/supabase-server"
-import { cookies } from "next/headers"
+import { verifyAdmin } from "@/lib/auth"
 
 type ActivityItem = {
   id: string
@@ -9,14 +9,6 @@ type ActivityItem = {
   description: string
   time: string
   icon: string
-}
-
-// Helper function to verify admin access
-async function verifyAdmin() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('admin_token')
-  if (!token) throw new Error("Unauthorized")
-  return true
 }
 
 export async function getDashboardData(timeRange: string = '12m') {
@@ -40,7 +32,7 @@ export async function getDashboardData(timeRange: string = '12m') {
     const { data: clients, error: clientsError } = await supabaseAdmin
       .from('clients')
       .select('id, client_name, project_name, project_value, status, created_at, start_date')
-      .gte('created_at', pastDateIso)
+      .gte('start_date', pastDateIso)
 
     if (clientsError) throw clientsError
 

@@ -1,14 +1,7 @@
 'use server'
 
 import { supabaseAdmin } from "@/lib/supabase-server"
-import { cookies } from "next/headers"
-
-async function verifyAdmin() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('admin_token')
-  if (!token) throw new Error("Unauthorized")
-  return true
-}
+import { verifyAdmin, sanitizeError } from "@/lib/auth"
 
 export type ClientCRM = {
   id: string
@@ -45,8 +38,7 @@ export async function getClients(): Promise<{ success: true; data: ClientCRM[] }
 
     return { success: true, data: data as ClientCRM[] }
   } catch (error: any) {
-    console.error("getClients error:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: await sanitizeError(error, "getClients") }
   }
 }
 
@@ -72,8 +64,7 @@ export async function createClient(input: CreateClientInput): Promise<{ success:
 
     return { success: true, data: data as ClientCRM }
   } catch (error: any) {
-    console.error("createClient error:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: await sanitizeError(error, "createClient") }
   }
 }
 
@@ -92,8 +83,7 @@ export async function updateClient(id: string, input: Partial<CreateClientInput>
 
     return { success: true, data: data as ClientCRM }
   } catch (error: any) {
-    console.error("updateClient error:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: await sanitizeError(error, "updateClient") }
   }
 }
 
@@ -110,7 +100,6 @@ export async function deleteClient(id: string): Promise<{ success: true } | { su
 
     return { success: true }
   } catch (error: any) {
-    console.error("deleteClient error:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: await sanitizeError(error, "deleteClient") }
   }
 }

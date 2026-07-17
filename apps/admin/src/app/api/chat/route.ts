@@ -1,6 +1,8 @@
 import { groq } from '@ai-sdk/groq';
 import { streamText } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
+import { jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
 
 export const maxDuration = 30;
 
@@ -127,6 +129,18 @@ Anda HANYA boleh menjawab pertanyaan seputar:
 
 export async function POST(req: Request) {
   try {
+    // Auth check — verify admin JWT
+    const cookieStore = await cookies();
+    const token = cookieStore.get('admin_token')?.value;
+    if (!token || !process.env.JWT_SECRET) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+    }
+    try {
+      await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET));
+    } catch {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+    }
+
     const { messages } = await req.json();
 
     const cleanMessages = (messages as any[]).map((m: any) => ({
