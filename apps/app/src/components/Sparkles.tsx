@@ -1,8 +1,7 @@
 "use client"
 
 import { useEffect, useId, useState } from "react"
-import Particles, { initParticlesEngine } from "@tsparticles/react"
-import { loadSlim } from "@tsparticles/slim"
+import { useMobileDevice } from "@/hooks/use-mobile"
 
 export function Sparkles({
   className,
@@ -31,17 +30,31 @@ export function Sparkles({
   background?: string;
   options?: any;
 }) {
+  const isMobile = useMobileDevice()
   const [isReady, setIsReady] = useState(false)
+  const [Particles, setParticles] = useState<any>(null)
+  const id = useId()
 
   useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine)
-    }).then(() => {
-      setIsReady(true)
+    if (isMobile) return
+    let cancelled = false
+    import("@tsparticles/react").then((mod) => {
+      if (cancelled) return
+      mod.initParticlesEngine(async (engine: any) => {
+        const { loadSlim } = await import("@tsparticles/slim")
+        await loadSlim(engine)
+      }).then(() => {
+        if (!cancelled) {
+          setParticles(() => mod.default)
+          setIsReady(true)
+        }
+      })
     })
-  }, [])
+    return () => { cancelled = true }
+  }, [isMobile])
 
-  const id = useId()
+  if (isMobile) return null
+  if (!Particles || !isReady) return null
 
   const defaultOptions = {
     background: {
@@ -91,5 +104,5 @@ export function Sparkles({
     detectRetina: true,
   }
 
-  return isReady ? <Particles id={id} options={{ ...defaultOptions, ...options }} className={className} /> : null;
+  return <Particles id={id} options={{ ...defaultOptions, ...options }} className={className} />
 }

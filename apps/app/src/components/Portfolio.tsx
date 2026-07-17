@@ -101,7 +101,7 @@ const Portfolio = () => {
 
         {/* Projects Grid */}
         <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <AnimatePresence mode="popLayout">
+          <AnimatePresence>
             {visibleProjects.map((project, index) => (
               <motion.article
                 key={project.id}

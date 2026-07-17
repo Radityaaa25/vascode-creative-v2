@@ -1,6 +1,7 @@
 'use client'
 import { useRef } from 'react'
 import { motion } from 'framer-motion'
+import { useMobileDevice } from '@/hooks/use-mobile'
 
 const K = 12
 const H = 100 / (K - 1)
@@ -34,7 +35,22 @@ const orbs: OrbConfig[] = [
 type OrbKF = { x: number[]; y: number[]; scale: number[]; opacity: number[] }
 
 export default function BackgroundEffects() {
+  const isMobile = useMobileDevice()
   const kfs = useRef<OrbKF[] | null>(null)
+
+  if (isMobile) {
+    return (
+      <div className="fixed inset-0 -z-10 pointer-events-none" style={{ backgroundColor: 'hsl(var(--background))' }} aria-hidden="true">
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(to right, var(--grid-line) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px)`,
+            backgroundSize: '50px 50px',
+          }}
+        />
+      </div>
+    )
+  }
+
   if (!kfs.current) {
     kfs.current = orbs.map(o => ({
       x: o.xAmp === 0 ? Array(K).fill(0) : kf(o.xAmp),
