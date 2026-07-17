@@ -262,6 +262,19 @@
    Mobile Performance Optimizations
    =================================== */
 
+/* Simplify all Framer Motion animations on mobile */
+@media (max-width: 768px) {
+  /* Reduce animation complexity for better performance */
+  [data-projection-id] {
+    animation-timing-function: ease-out !important;
+  }
+  
+  /* Disable complex transforms on mobile */
+  .motion-reduce {
+    transform: none !important;
+  }
+}
+
 /* Hardware acceleration for common animated elements */
 @layer utilities {
   .gpu-accelerated {
@@ -338,4 +351,73 @@ nav {
     opacity: 0.3;
     filter: blur(50px);
   }
+  
+  /* Simplify shadows on mobile */
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+  }
+}
+
+/* ===================================
+   Hide External Watermarks
+   =================================== */
+   
+/* Hide Lovable AI watermark if injected */
+[data-lovable],
+[class*="lovable"],
+[id*="lovable"],
+iframe[src*="lovable"],
+a[href*="lovable"],
+img[src*="lovable"],
+div[style*="lovable"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Target common watermark patterns */
+.watermark,
+.badge-watermark,
+.powered-by,
+[class*="powered-by"],
+[id*="watermark"] {
+  display: none !important;
+}
+
+
+/* ===================================
+   Hide External Watermarks
+   =================================== */
+   
+/* Hide Lovable AI watermark if injected */
+[data-lovable],
+[class*="lovable"],
+[id*="lovable"],
+iframe[src*="lovable"],
+a[href*="lovable"],
+img[src*="lovable"],
+div[style*="lovable"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Hide any fixed positioned badge in bottom right */
+[style*="position: fixed"][style*="right"][style*="bottom"] {
+  /* Check if it's a small badge */
+}
+
+/* Target common watermark patterns */
+.watermark,
+.badge-watermark,
+.powered-by {
+  display: none !important;
 }

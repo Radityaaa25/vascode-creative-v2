@@ -17,3 +17,25 @@ export function useIsMobile() {
 
   return !!isMobile;
 }
+
+// More aggressive mobile detection including touch devices
+export function useMobileDevice() {
+  const [isMobile, setIsMobile] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth < MOBILE_BREAKPOINT;
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isAndroid = /Android/.test(navigator.userAgent);
+      
+      setIsMobile(isTouchDevice || isSmallScreen || isIOS || isAndroid);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile;
+}

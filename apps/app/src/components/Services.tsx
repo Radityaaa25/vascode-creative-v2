@@ -3,6 +3,8 @@ import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Globe, Video, Camera, Palette, Film, Monitor, Smartphone, PenTool, Image, Music, Code, Layout, Megaphone, BookOpen, ShoppingBag, Users, MessageCircle, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useMobileDevice } from '@/hooks/use-mobile';
+import { createSlideUpVariants, getViewportConfig } from '@/lib/animations';
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Globe, Video, Camera, Palette, Film, Monitor, Smartphone,
@@ -13,7 +15,9 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
 const Services = () => {
   const { t, content } = useLanguage();
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isMobile = useMobileDevice();
+  const viewportConfig = getViewportConfig();
+  const isInView = useInView(ref, { once: true, margin: viewportConfig.margin });
 
   const services = content.services.length > 0 ? content.services.map((s) => ({
     icon: ICON_MAP[s.icon] || Globe,
@@ -35,33 +39,35 @@ const Services = () => {
     );
   };
 
+  const slideUp = createSlideUpVariants();
+
   return (
     <section id="services" className="section-padding" ref={ref}>
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-16">
           <motion.span
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: isMobile ? 0.3 : 0.6 }}
             className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary font-medium text-sm mb-4"
           >
             {t('services.subtitle')}
           </motion.span>
 
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: isMobile ? 0.3 : 0.6, delay: isMobile ? 0 : 0.1 }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-snow mb-4"
           >
             {t('services.title')}
           </motion.h2>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: isMobile ? 0.3 : 0.6, delay: isMobile ? 0 : 0.2 }}
             className="text-snow/60 text-lg max-w-2xl mx-auto"
           >
             {t('services.description')}
@@ -73,16 +79,16 @@ const Services = () => {
           {services.map((service, index) => (
             <motion.div
               key={service.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: isMobile ? 15 : 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.1 * index }}
-              whileHover={{ y: -8 }}
+              transition={{ duration: isMobile ? 0.25 : 0.6, delay: isMobile ? 0 : 0.05 * index }}
+              whileHover={isMobile ? {} : { y: -8 }}
               className="group relative p-6 md:p-8 rounded-3xl bg-snow/5 border border-snow/10 hover:border-primary/50 transition-all duration-500"
             >
               {/* Icon */}
               <motion.div
                 className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
-                whileHover={{ rotate: 5 }}
+                whileHover={isMobile ? {} : { rotate: 5 }}
               >
                 <service.icon className="w-7 h-7 text-snow" />
               </motion.div>
@@ -95,8 +101,8 @@ const Services = () => {
               <motion.button
                 onClick={() => openWhatsApp(service.whatsappMessage)}
                 className="flex items-center gap-2 text-volt font-medium group/btn"
-                whileHover={{ x: 5 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={isMobile ? {} : { x: 5 }}
+                whileTap={{ scale: 0.97 }}
               >
                 {t('cta.book')}
                 <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />

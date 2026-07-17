@@ -1,7 +1,31 @@
-# Performance Optimizations for Mobile Devices
+# Performance Optimizations for Mobile Devices (Update 2)
 
 ## Overview
 This document outlines all performance optimizations implemented to improve mobile performance (specifically tested for iPhone XR and similar devices) without changing the UI/UX.
+
+## Latest Updates (2026-07-17)
+
+### 🎯 Major Improvements:
+1. **Aggressive Mobile Detection** - Created `useMobileDevice()` hook for comprehensive mobile/touch device detection
+2. **Animation Utility Library** - Centralized animation variants optimized for mobile
+3. **Component-Level Optimizations** - Hero, Services, and other sections now use mobile-aware animations
+4. **Lovable AI Watermark Removal** - Added CSS rules and Netlify config to block external watermarks
+5. **Global CSS Optimizations** - Simplified shadows and added mobile-specific performance rules
+
+## Files Modified/Created:
+
+### New Files:
+- ✅ `apps/app/src/lib/animations.ts` - Animation utility library
+- ✅ `apps/app/netlify.toml` - Netlify configuration with CSP headers
+
+### Modified Files:
+- ✅ `apps/app/src/hooks/use-mobile.tsx` - Added aggressive mobile detection
+- ✅ `apps/app/src/components/Hero.tsx` - Mobile-optimized animations
+- ✅ `apps/app/src/components/Services.tsx` - Mobile-optimized animations
+- ✅ `apps/app/src/index.css` - Additional mobile performance CSS
+- ✅ `apps/app/src/contexts/ThemeContext.tsx` - Disabled View Transition on mobile
+- ✅ `apps/app/src/components/HowToOrder.tsx` - Optimized scroll animations
+- ✅ `apps/app/src/components/Navbar.tsx` - Throttled scroll handler
 
 ## Optimizations Applied
 
@@ -44,10 +68,33 @@ This document outlines all performance optimizations implemented to improve mobi
   - Optimized font rendering for mobile
   - Added smooth scrolling optimizations for iOS (`-webkit-overflow-scrolling: touch`)
   - Respected `prefers-reduced-motion` for accessibility
+  - **Simplified shadows on mobile** - All large shadows reduced to simple shadow
   
 - **Impact**: Better rendering performance, reduced GPU load on mobile Safari
 
-### 5. Existing Optimizations (Already in place)
+### 5. Mobile Animation Utilities (animations.ts)
+- **New utility library** with mobile-aware animation variants:
+  - `createFadeVariants()` - Faster fade animations on mobile (0.2s vs 0.4s)
+  - `createSlideUpVariants()` - Reduced movement on mobile (10px vs 20px)
+  - `createScaleVariants()` - Subtle scale on mobile (0.98 vs 0.95)
+  - `getViewportConfig()` - Earlier animation triggers on mobile
+  - `getHoverTapConfig()` - Disabled hover animations on mobile
+  - `getStaggerConfig()` - Reduced stagger delay on mobile (0.03s vs 0.1s)
+  
+- **Impact**: Consistent, optimized animations across all components
+
+### 6. Lovable AI Watermark Removal (NEW)
+- **Problem**: Logo Lovable AI muncul di pojok kanan bawah saat share link
+- **Solutions Applied**:
+  1. **CSS Hiding Rules** (index.css):
+     - Hide any element with `lovable` in class/id/data attributes
+     - Hide common watermark patterns (`.watermark`, `.powered-by`, etc)
+  2. **Netlify Configuration** (netlify.toml):
+     - Content Security Policy headers to block external script injections
+     - Disabled Netlify plugin injections
+     - Added security headers (X-Frame-Options, CSP, etc)
+  
+- **Impact**: No more external watermarks or branding on the site
 - **Route-level code splitting**: Using `React.lazy` in App.tsx for pages
 - **Fast build tool**: Using `@vitejs/plugin-react-swc` instead of Babel
 - **Background effects optimization**: Using `useRef` to memoize keyframe calculations
