@@ -47,27 +47,27 @@ const Services = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <motion.span
-            initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
+            initial={{ opacity: 0, y: isMobile ? 8 : 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: isMobile ? 0.3 : 0.6 }}
+            transition={{ duration: isMobile ? 0.35 : 0.6, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' }}
             className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary font-medium text-sm mb-4"
           >
             {t('services.subtitle')}
           </motion.span>
 
           <motion.h2
-            initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
+            initial={{ opacity: 0, y: isMobile ? 8 : 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: isMobile ? 0.3 : 0.6, delay: isMobile ? 0 : 0.1 }}
+            transition={{ duration: isMobile ? 0.35 : 0.6, delay: isMobile ? 0 : 0.1, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-snow mb-4"
           >
             {t('services.title')}
           </motion.h2>
 
           <motion.p
-            initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
+            initial={{ opacity: 0, y: isMobile ? 8 : 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: isMobile ? 0.3 : 0.6, delay: isMobile ? 0 : 0.2 }}
+            transition={{ duration: isMobile ? 0.35 : 0.6, delay: isMobile ? 0 : 0.2, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' }}
             className="text-snow/60 text-lg max-w-2xl mx-auto"
           >
             {t('services.description')}
@@ -79,9 +79,9 @@ const Services = () => {
           {services.map((service, index) => (
             <motion.div
               key={service.title}
-              initial={{ opacity: 0, y: isMobile ? 15 : 30 }}
+              initial={{ opacity: 0, y: isMobile ? 10 : 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: isMobile ? 0.25 : 0.6, delay: isMobile ? 0 : 0.05 * index }}
+              transition={{ duration: isMobile ? 0.35 : 0.6, delay: isMobile ? 0.04 * index : 0.05 * index, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' }}
               whileHover={isMobile ? {} : { y: -8 }}
               className="group relative p-6 md:p-8 rounded-3xl bg-snow/5 border border-snow/10 hover:border-primary/50 transition-all duration-500"
             >

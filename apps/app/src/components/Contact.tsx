@@ -3,11 +3,13 @@ import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { MessageCircle, Instagram, Mail, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getViewportConfig } from '@/lib/animations';
 
 const Contact = () => {
   const { t, language, content } = useLanguage();
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const viewportConfig = getViewportConfig();
+  const isInView = useInView(ref, { once: true, margin: viewportConfig.margin });
 
   const openWhatsApp = () => {
     const message =

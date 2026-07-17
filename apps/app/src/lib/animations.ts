@@ -27,9 +27,9 @@ export const createFadeVariants = (config?: AnimationConfig) => {
     visible: {
       opacity: 1,
       transition: {
-        duration: isMobile ? 0.2 : (config?.duration ?? 0.4),
+        duration: isMobile ? 0.35 : (config?.duration ?? 0.4),
         delay: isMobile ? 0 : (config?.delay ?? 0),
-        ease: 'easeOut',
+        ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut',
       },
     },
   };
@@ -42,15 +42,15 @@ export const createSlideUpVariants = (config?: AnimationConfig) => {
   return {
     hidden: { 
       opacity: 0, 
-      y: isMobile ? 10 : 20  // Reduced movement on mobile
+      y: isMobile ? 10 : 20
     },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: isMobile ? 0.2 : (config?.duration ?? 0.4),
+        duration: isMobile ? 0.35 : (config?.duration ?? 0.4),
         delay: isMobile ? 0 : (config?.delay ?? 0),
-        ease: 'easeOut',
+        ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut',
       },
     },
   };
@@ -63,28 +63,28 @@ export const createScaleVariants = (config?: AnimationConfig) => {
   return {
     hidden: { 
       opacity: 0, 
-      scale: isMobile ? 0.98 : 0.95  // Subtle scale on mobile
+      scale: isMobile ? 0.98 : 0.95
     },
     visible: {
       opacity: 1,
       scale: 1,
       transition: {
-        duration: isMobile ? 0.2 : (config?.duration ?? 0.35),
+        duration: isMobile ? 0.35 : (config?.duration ?? 0.35),
         delay: isMobile ? 0 : (config?.delay ?? 0),
-        ease: 'easeOut',
+        ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut',
       },
     },
   };
 };
 
-// Viewport config for mobile
+// Viewport config — positive margin triggers animation BEFORE element enters viewport
 export const getViewportConfig = () => {
   const isMobile = isMobileDevice();
   
   return {
     once: true,
-    margin: isMobile ? '-50px' : '-80px',  // Trigger animations earlier on mobile
-    amount: isMobile ? 0.1 : 0.2,  // Lower threshold on mobile
+    margin: isMobile ? '80px' : '-80px',
+    amount: isMobile ? 0.1 : 0.2,
   };
 };
 
@@ -93,9 +93,9 @@ export const getTransitionConfig = (config?: AnimationConfig) => {
   const isMobile = isMobileDevice();
   
   return {
-    duration: isMobile ? 0.2 : (config?.duration ?? 0.4),
+    duration: isMobile ? 0.35 : (config?.duration ?? 0.4),
     delay: isMobile ? 0 : (config?.delay ?? 0),
-    ease: 'easeOut',
+    ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut',
   };
 };
 

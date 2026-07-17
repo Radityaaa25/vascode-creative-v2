@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ExternalLink, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getViewportConfig } from '@/lib/animations';
 
 interface Project {
   id: string | number;
@@ -19,7 +20,8 @@ const MAX_VISIBLE = 6;
 const Portfolio = () => {
   const { t, content } = useLanguage();
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const viewportConfig = getViewportConfig();
+  const isInView = useInView(ref, { once: true, margin: viewportConfig.margin });
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);

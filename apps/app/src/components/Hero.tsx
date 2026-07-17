@@ -47,9 +47,9 @@ const Hero = () => {
 
         {/* Main Title */}
         <motion.h1
-          initial={{ opacity: 0, y: isMobile ? 10 : 30 }}
+          initial={{ opacity: 0, y: isMobile ? 8 : 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: isMobile ? 0.3 : 0.6, delay: isMobile ? 0 : 0.1 }}
+          transition={{ duration: isMobile ? 0.35 : 0.6, delay: isMobile ? 0.05 : 0.1, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' }}
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-snow leading-tight mb-6"
         >
           {t('hero.title1')}
@@ -59,9 +59,9 @@ const Hero = () => {
 
         {/* Description */}
         <motion.p
-          initial={{ opacity: 0, y: isMobile ? 10 : 30 }}
+          initial={{ opacity: 0, y: isMobile ? 8 : 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: isMobile ? 0.3 : 0.6, delay: isMobile ? 0.05 : 0.2 }}
+          transition={{ duration: isMobile ? 0.35 : 0.6, delay: isMobile ? 0.13 : 0.2, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' }}
           className="text-snow/60 text-lg md:text-xl max-w-2xl mx-auto mb-10"
         >
           {t('hero.description')}
@@ -69,9 +69,9 @@ const Hero = () => {
 
         {/* CTA Buttons */}
         <motion.div
-          initial={{ opacity: 0, y: isMobile ? 10 : 30 }}
+          initial={{ opacity: 0, y: isMobile ? 8 : 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: isMobile ? 0.3 : 0.6, delay: isMobile ? 0.1 : 0.3 }}
+          transition={{ duration: isMobile ? 0.35 : 0.6, delay: isMobile ? 0.2 : 0.3, ease: isMobile ? [0.22, 1, 0.36, 1] : 'easeOut' }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <motion.button

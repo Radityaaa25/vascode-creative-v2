@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getViewportConfig } from '@/lib/animations';
 
 const DEFAULT_FAQ = [
   { question_id: 'Bagaimana cara memesan layanan?', question_en: 'How do I order a service?', answer_id: 'Anda bisa melihat portofolio kami, pilih layanan yang diinginkan, lalu klik tombol "Pesan Sekarang" untuk terhubung dengan kami via WhatsApp. Tim kami akan merespon dengan cepat!', answer_en: 'Browse our portfolio, choose a service, and click "Book Now" to connect with us via WhatsApp. Our team will respond promptly!' },
@@ -14,7 +15,8 @@ const DEFAULT_FAQ = [
 const FAQ = () => {
   const { t, language, content } = useLanguage();
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const viewportConfig = getViewportConfig();
+  const isInView = useInView(ref, { once: true, margin: viewportConfig.margin });
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = content.faq.length > 0 ? content.faq : DEFAULT_FAQ;
