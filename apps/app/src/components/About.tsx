@@ -67,24 +67,33 @@ const About = () => {
 
           {/* Visual Element */}
           <motion.div variants={slideRight} className="relative">
-            <div className="relative aspect-square max-w-md mx-auto">
-              <div className="about-r1 absolute inset-0 rounded-3xl bg-gradient-to-br from-primary/20 to-secondary/20" />
-              <div className="about-r2 absolute inset-4 rounded-3xl bg-gradient-to-br from-primary to-primary/80" />
-              <div className="about-r3 absolute inset-8 rounded-3xl bg-void flex items-center justify-center border border-snow/10">
-                <div className="about-logo w-2/3 h-2/3 flex items-center justify-center">
-                  <img src={logoIcon} alt="Vascode Logo" className="w-full h-full object-contain drop-shadow-2xl" loading="lazy" width={400} height={400} />
+            {isMobile ? (
+              <div className="relative aspect-square max-w-md mx-auto">
+                <div className="absolute inset-0 rounded-3xl bg-primary/10" />
+                <div className="absolute inset-4 rounded-3xl bg-primary flex items-center justify-center">
+                  <img src={logoIcon} alt="Vascode Logo" className="w-2/3 h-2/3 object-contain" loading="lazy" width={400} height={400} />
                 </div>
               </div>
-              <div className="about-f1 absolute -top-4 -right-4 w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center shadow-lg">
-                <span className="text-2xl">🎨</span>
+            ) : (
+              <div className="relative aspect-square max-w-md mx-auto">
+                <div className="about-r1 absolute inset-0 rounded-3xl bg-gradient-to-br from-primary/20 to-secondary/20" />
+                <div className="about-r2 absolute inset-4 rounded-3xl bg-gradient-to-br from-primary to-primary/80" />
+                <div className="about-r3 absolute inset-8 rounded-3xl bg-void flex items-center justify-center border border-snow/10">
+                  <div className="about-logo w-2/3 h-2/3 flex items-center justify-center">
+                    <img src={logoIcon} alt="Vascode Logo" className="w-full h-full object-contain drop-shadow-2xl" loading="lazy" width={400} height={400} />
+                  </div>
+                </div>
+                <div className="about-f1 absolute -top-4 -right-4 w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center shadow-lg">
+                  <span className="text-2xl">🎨</span>
+                </div>
+                <div className="about-f2 absolute -bottom-4 -left-4 w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg">
+                  <span className="text-2xl">💻</span>
+                </div>
+                <div className="about-f3 absolute top-1/2 -right-8 w-12 h-12 rounded-xl bg-void/80 border border-snow/20 shadow-lg flex items-center justify-center">
+                  <span className="text-xl">📸</span>
+                </div>
               </div>
-              <div className="about-f2 absolute -bottom-4 -left-4 w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg">
-                <span className="text-2xl">💻</span>
-              </div>
-              <div className="about-f3 absolute top-1/2 -right-8 w-12 h-12 rounded-xl bg-void/80 border border-snow/20 shadow-lg flex items-center justify-center">
-                <span className="text-xl">📸</span>
-              </div>
-            </div>
+            )}
           </motion.div>
         </motion.div>
       </div>

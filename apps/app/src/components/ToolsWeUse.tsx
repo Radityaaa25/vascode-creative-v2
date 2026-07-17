@@ -1,5 +1,4 @@
-import { lazy, Suspense, useRef } from 'react';
-import { useInView } from 'framer-motion';
+import { lazy, Suspense } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useMobileDevice } from '@/hooks/use-mobile';
@@ -22,8 +21,6 @@ const ToolsWeUse = () => {
   const { language, content } = useLanguage();
   const { theme } = useTheme();
   const isMobile = useMobileDevice();
-  const ref = useRef(null);
-  const isInView = useInView(ref, { margin: '200px' });
   const isID = language === 'id';
 
   const tools = content.tools && content.tools.length > 0 ? content.tools : DEFAULT_TOOLS;
@@ -51,7 +48,7 @@ const ToolsWeUse = () => {
   };
 
   return (
-    <section id="tools" className="relative w-full overflow-hidden py-24 md:py-32" ref={ref}>
+    <section id="tools" className="relative w-full overflow-hidden py-24 md:py-32">
       <div className="mx-auto w-full max-w-4xl relative z-10">
         <div className="text-center">
           <span className="mb-4 inline-block rounded-full bg-[#8350e8]/10 px-4 py-1.5 font-medium text-xs text-[#8350e8] tracking-widest">
@@ -65,7 +62,6 @@ const ToolsWeUse = () => {
             className="flex h-full w-full items-center" 
             duration={isMobile ? 45 : 25}
             gap={64}
-            paused={!isInView}
           >
             {tools.map((tool) => (
               <div 
